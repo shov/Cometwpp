@@ -1,0 +1,11 @@
+.*
+!/.gitignore
+
+config.php
+css/*
+js/*
+img/*
+inc/lib/*
+inc/features/*
+render/*
+tpl/*
