@@ -1,23 +1,24 @@
 <?php
-namespace Cometwpp;
+namespace Cometwpp\Core;
 
 if ( ! defined( 'ABSPATH' ) ) {
   exit; // Exit if accessed directly.
 }
 
 /**
- * Including css files As Is
+ * Including js files As Is
  * @package Cometwpp
+ * @subpackage Core
  * @category Class
  */
-class CssProvider extends ResGraber {
+class JsProvider extends ResGraber {
   /**
    * @param array $aConf = ['dir_path' => string, 'ext' => string|array ]
    */  
   public function __construct($dirPath) {
     parent::__construct([
       'dir_path' => (string)$dirPath,
-      'ext' => 'css',
+      'ext' => 'js',
     ]);
   }
 }

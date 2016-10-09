@@ -39,20 +39,28 @@ final class PluginName extends AbstractPluginControll {
     if(self::$_inst === null) {
 
       spl_autoload_register(function($name) {
-        $niceName = strtolower(end(explode('\\', $name)));
+        $aNameParts = explode('\\', $name);
+        $niceName = strtolower(end($aNameParts));
         
         $prefix = 'class';
         if((strlen($niceName)-strlen('trait')) === strpos($niceName, 'trait')) $prefix = 'trait';
         
         $incPath = __DIR__.DIRECTORY_SEPARATOR.'inc'.DIRECTORY_SEPARATOR;
-        $featurePath = $incPath.'features'.DIRECTORY_SEPARATOR;
-        
         $filename = $prefix.'.'.$niceName.'.php';
-        
-        if (is_readable($incPath.$filename)) {
-          require $incPath.$filename;
-        } elseif(is_readable($featurePath.$filename)) { //try load feature class
-          require $featurePath.$filename;
+
+        $aPathes = [$incPath,];
+        if(count($aNameParts > 2)) {
+          $aPathes = [
+            $incPath.strtolower($aNameParts[1]).DIRECTORY_SEPARATOR,
+            $incPath,
+          ];
+        }
+       
+        foreach ($aPathes as $sPath) {
+          if (is_readable($sPath.$filename)) {
+            require $sPath.$filename;
+            break;
+          } 
         }
         
       }, true, true);
@@ -62,24 +70,24 @@ final class PluginName extends AbstractPluginControll {
   }
 
   private $core;
+  private $business;
   private $adminPanel;
   private $client;
 
   private function __construct() {
     /* Up Core */
-    $this->core = Core::getInstance(__DIR__.DIRECTORY_SEPARATOR.'config.php');
+    $this->core = Core\Core::getInstance(__DIR__.DIRECTORY_SEPARATOR.'config.php');
 
     /* Make Setup */
     $this->makePluginSetup();
-    
-    /* Cron Actions */
-    CronWalker::init($this->core);
-    
-    /* Create Admin part */
-    $this->adminPanel = AdminPanel::getInstance($this->core);
 
-    /* Create Client part */
-    $this->client = Client::getInstance($this->core);
+    /* Up Business */
+    $this->business = Business\Business::getInstance($this->core);
+    
+    /* Context instances */
+    Context\CronWalker::init($this->core, $this->business);
+    $this->adminPanel = Context\AdminPanel::getInstance($this->core, $this->business);
+    $this->client     = Context\Client::getInstance($this->core, $this->business);
   }
 
   private function makePluginSetup() {

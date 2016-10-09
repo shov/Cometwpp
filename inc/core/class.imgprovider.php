@@ -1,5 +1,5 @@
 <?php
-namespace Cometwpp;
+namespace Cometwpp\Core;
 
 if ( ! defined( 'ABSPATH' ) ) {
   exit; // Exit if accessed directly.
@@ -8,6 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Provide full pathes to specific images
  * @package Cometwpp
+ * @subpackage Core
  * @category Class
  */
 class ImgProvider extends ResGraber {

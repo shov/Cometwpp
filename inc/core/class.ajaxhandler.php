@@ -1,5 +1,5 @@
 <?php
-namespace Cometwpp;
+namespace Cometwpp\Core;
 
 if ( ! defined( 'ABSPATH' ) ) {
   exit; // Exit if accessed directly.
@@ -8,6 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Stack Callbacks for WP ajax hooks
  * @package Cometwpp
+ * @subpackage Core
  * @category Class
  */
 class AjaxHandler {

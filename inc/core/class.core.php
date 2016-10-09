@@ -1,5 +1,5 @@
 <?php
-namespace Cometwpp;
+namespace Cometwpp\Core;
 
 if ( ! defined( 'ABSPATH' ) ) {
   exit; // Exit if accessed directly.
@@ -8,6 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Core Class isn't god class, just initializing and provide access to all core-objects
  * @package Cometwpp
+ * @subpackage Core
  * @category Class
  */
 final class Core {

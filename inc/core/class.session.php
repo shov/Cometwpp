@@ -1,5 +1,5 @@
 <?php
-namespace Cometwpp;
+namespace Cometwpp\Core;
 
 if ( ! defined( 'ABSPATH' ) ) {
   exit; // Exit if accessed directly.
@@ -8,6 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * App Session Class
  * @package Cometwpp
+ * @subpackage Core
  * @category Class
  */
 class Session {
