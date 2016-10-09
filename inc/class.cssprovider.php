@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Give css <link> or source file path
+ * Including css files As Is
  * @package Cometwpp
  * @category Class
  */
@@ -20,12 +20,4 @@ class CssProvider extends ResGraber {
       'ext' => 'css',
     ]);
   }
-
-  /**
-   * @param string $name
-   * @param boolean $bSourcePathReturn
-   */
-  public function giveMe($name, $bSourcePathReturn = false) {
-
-  }  
 }
