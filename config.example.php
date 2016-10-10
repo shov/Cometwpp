@@ -21,10 +21,6 @@ $aConfig = [
     'css'    => __DIR__.'/css',
     'img'    => __DIR__.'/img',
   ],
-  'sqltables' => [
-    'product' => 'price',
-    'cart'    => 'cart',
-  ],
   'wpoptions' => [
     'status',
     'settings',
