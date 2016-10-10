@@ -29,8 +29,6 @@ final class Core {
   private $session;
   
   private $registry;
-  private $product;
-  private $cart;
   
   private $templater;
   private $jsProvider;
@@ -75,19 +73,6 @@ final class Core {
     $this->registry = Registry::getInstance([
       'wpoptions' => $aConfig['wpoptions'],
       'data_provider_factory' => $this->getDataProviderFactory(),
-    ]);
-
-    $this->product = Product::getInstance([
-      'data_provider_factory' => $this->getDataProviderFactory(),
-      'tablename' => $aConfig['sqltables']['product'],
-    ]);
-
-    $this->cart = Cart::getInstance([
-      'data_provider_factory' => $this->getDataProviderFactory(),
-      'tablename' => $aConfig['sqltables']['cart'],
-      'product' => $this->getProduct(),
-      'session' => $this->getSession(),
-      'ajax_handler' => $this->getAjaxHandler(),
     ]);
 
     $this->templater = new Templater([
