@@ -1,5 +1,6 @@
 <?php
 namespace Cometwpp\Core;
+use Cometwpp as R;
 
 if ( ! defined( 'ABSPATH' ) ) {
   exit; // Exit if accessed directly.
@@ -12,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @category Class
  */
 class AjaxHandler {
-  use PrefixUserTrait;
+  use R\PrefixUserTrait;
 
   private $aHandlers;
   

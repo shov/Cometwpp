@@ -1,5 +1,6 @@
 <?php
 namespace Cometwpp\Core;
+use Cometwpp as R;
 
 if ( ! defined( 'ABSPATH' ) ) {
   exit; // Exit if accessed directly.
@@ -13,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Templater extends ResGraber {
   /**
-   * @param array $aConf = ['dir_path' => string, 'ext' => string|array ]
+   * @param string $dirPath : path to target dir, who will be as root for "queries"
    */  
   public function __construct($dirPath) {
     parent::__construct([

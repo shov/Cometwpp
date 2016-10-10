@@ -1,5 +1,6 @@
 <?php
 namespace Cometwpp\Core;
+use Cometwpp as R;
 
 if ( ! defined( 'ABSPATH' ) ) {
   exit; // Exit if accessed directly.

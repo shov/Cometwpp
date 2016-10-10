@@ -1,5 +1,6 @@
 <?php
 namespace Cometwpp\Core;
+use Cometwpp as R;
 
 if ( ! defined( 'ABSPATH' ) ) {
   exit; // Exit if accessed directly.
@@ -12,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @category Class
  */
 final class Core {
-  use SingletonTrait, PrefixUserTrait;
+  use R\SingletonTrait, R\PrefixUserTrait;
 
   public static function getInstance($configPath) {
     if(self::$_inst === null) {
@@ -22,12 +23,10 @@ final class Core {
   }
 
   private $prefix;
-  private $pathConf;
-  private $dataProviderFactory;
+  private $pathes;
 
   private $ajaxHandler;
   private $session;
-  
   private $registry;
   
   private $templater;
@@ -35,7 +34,7 @@ final class Core {
   private $cssProvider;
   private $imgProvider;
   
-  private function __construct($configPath) {
+  private function __construct($configPath = false) {
     /* default.. may be wrong. Strong recomendated use config.php */
     $aDefaultConfig = [
       'prefix' => 'cometwpp',
@@ -44,10 +43,6 @@ final class Core {
         'js'     => __DIR__.'/../js',
         'css'    => __DIR__.'/../css',
         'img'    => __DIR__.'/../img',
-      ],
-      'sqltables' => [
-        'product' => 'price',
-        'cart'    => 'cart',
       ],
       'wpoptions' => [
         'status',
@@ -61,26 +56,16 @@ final class Core {
     $aConfig = $this->readConfig($configPath);
     if(!is_array($aConfig)) $aConfig = $aDefaultConfig;
 
-    $this->prefix   = $this->setPrefix($aConfig['prefix']);
-    $this->pathConf = $aConfig['pathes'];
-    $this->dataProviderFactory = new DataProviderFactory($this->getPrefix());
+    $this->prefix = $this->setPrefix($aConfig['prefix']);
+    $this->pathes = $aConfig['pathes'];
 
-    $this->ajaxHandler = new AjaxHandler($this->getPrefix());
-    $this->session = Session::getInstance([
-      'prefix' => $this->getPrefix(),
-    ]);
+    $this->ajaxHandler = new AjaxHandler($aConfig['prefix']);
+    $this->session  = Session::getInstance($aConfig['prefix']);
 
-    $this->registry = Registry::getInstance([
-      'wpoptions' => $aConfig['wpoptions'],
-      'data_provider_factory' => $this->getDataProviderFactory(),
-    ]);
+    $this->registry = Registry::getInstance($aConfig['prefix'], $aConfig['wpoptions']);
 
-    $this->templater = new Templater([
-      'dir_path' => $aConfig['pathes']['tpl'],
-      'ext' => 'php',
-    ]);
-    
-    $this->jsProvider = new JsProvider($aConfig['pathes']['js']);
+    $this->templater   = new Templater($aConfig['pathes']['tpl']);
+    $this->jsProvider  = new JsProvider($aConfig['pathes']['js']);
     $this->cssProvider = new CssProvider($aConfig['pathes']['css']);
     $this->imgProvider = new ImgProvider($aConfig['pathes']['img']);
   }
