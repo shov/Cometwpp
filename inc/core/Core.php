@@ -74,10 +74,10 @@ final class Core
    */  
   private function readConfig($configPath) 
   {
-    if(!is_readable($configPath)) throw new Exception(sprintf("Wrong config file to read: %s", $configPath));
+    if(!is_readable($configPath)) throw new InvalidArgumentException(sprintf("Wrong config file to read: %s", $configPath));
     
     require($configPath);
-    if(!is_array($aConfig)) throw new Exception(sprintf("Wrong config php file: %s \n variable $aConfig isnt array", $configPath));
+    if(!is_array($aConfig)) throw new UnexpectedValueException(sprintf("Wrong config php file: %s \n variable $aConfig isnt array", $configPath));
 
     return $aConfig;
   }
