@@ -85,15 +85,15 @@ final class Core
   /**
    *  Acess to core-objects and core-properties
    *  call like getAjaxHandler();
-   *  @return mixed
+   *  @return NULL|mixed
    */  
-  public function __call($getcoreobjname, $aArgs = []) 
+  public function __call($getCoreObjName, $aArgs = []) 
   {
-    if(!is_string($getcoreobjname)) return NULL;
-    if(strlen($getcoreobjname) < 4) return NULL;
-    if(strpos($getcoreobjname, 'get') != 0) return NULL;
+    if(!is_string($getCoreObjName)) return NULL;
+    if(strlen($getCoreObjName) < 4) return NULL;
+    if(strpos($getCoreObjName, 'get') != 0) return NULL;
 
-    $prop = substr($getcoreobjname, 3);
+    $prop = substr($getCoreObjName, 3);
     $prop = substr_replace($prop, strtolower(substr($prop, 0, 1)), 0, 1);
 
     if(property_exists($this, $prop)) return $this->$prop;
