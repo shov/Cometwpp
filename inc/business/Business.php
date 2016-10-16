@@ -19,7 +19,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Find, load, initializate and provide business models objects
+ * Find, load, initializate, provide business models objects
+ * and provide access from those objects to Core
  * @package Cometwpp
  * @subpackage Business
  * @category Class
