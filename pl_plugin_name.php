@@ -37,32 +37,18 @@ final class PluginName extends AbstractPluginControll {
   private static $_inst;
   public static function init() {
     if(self::$_inst === null) {
-
       spl_autoload_register(function($name) {
-        $aNameParts = explode('\\', $name);
-        $niceName = strtolower(end($aNameParts));
-        
-        $prefix = 'class';
-        if((strlen($niceName)-strlen('trait')) === strpos($niceName, 'trait')) $prefix = 'trait';
-        
-        $incPath = __DIR__.DIRECTORY_SEPARATOR.'inc'.DIRECTORY_SEPARATOR;
-        $filename = $prefix.'.'.$niceName.'.php';
+        $nameParts = explode('\\', $name);
+        $nameParts = array_slice($nameParts, 1);
+        $baseIncPath = __DIR__.DIRECTORY_SEPARATOR.'inc';
+        $fullPath = $baseIncPath;
 
-        $aPathes = [$incPath,];
-        if(count($aNameParts > 2)) {
-          $aPathes = [
-            $incPath.strtolower($aNameParts[1]).DIRECTORY_SEPARATOR,
-            $incPath,
-          ];
+        foreach ($nameParts as $key => $part) {
+          $fullPath .= DIRECTORY_SEPARATOR.$part;
         }
-       
-        foreach ($aPathes as $sPath) {
-          if (is_readable($sPath.$filename)) {
-            require $sPath.$filename;
-            break;
-          } 
-        }
-        
+        $fullPath .= '.php';
+
+        if (is_readable($fullPath)) require $fullPath;
       }, true, true);
 
       self::$_inst = new self();
