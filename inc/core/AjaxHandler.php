@@ -1,6 +1,17 @@
 <?php
+
+/*
+ * This file is part of the Cometwpp package.
+ *
+ * (c) Alexandr Shevchenko [comet.by] alexandr@comet.by
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Cometwpp\Core;
-use Cometwpp as R;
+
+use Cometwpp\PrefixUserTrait;
 
 if ( ! defined( 'ABSPATH' ) ) {
   exit; // Exit if accessed directly.
@@ -12,12 +23,14 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @subpackage Core
  * @category Class
  */
-class AjaxHandler {
-  use R\PrefixUserTrait;
+class AjaxHandler 
+{
+  use PrefixUserTrait;
 
   private $aHandlers;
   
-  public function __construct($prefix) {
+  public function __construct($prefix) 
+  {
     if(is_string($prefix))  $this->setPrefix($prefix);
     $this->aHandlers = [];
   }
@@ -25,7 +38,8 @@ class AjaxHandler {
   /**
   * @return return string : prefix to adding to ajax action names in js
   */
-  public function getPrefixForAjax() {
+  public function getPrefixForAjax() 
+  {
     return $this->prefix;
   }
 
@@ -35,7 +49,8 @@ class AjaxHandler {
    * @param string $name : name of the wp ajax hook, looks like hook_name for example
    * @param callable $handler : clousure, do it like this $ajaxHandler->addHandler('hook_name', function() { echo 'resp'; die(); }); 
    */
-  public function addHandler($name, callable $handler) {
+  public function addHandler($name, callable $handler) 
+  {
     $name = (string)$name;
     if(!preg_match('/^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$/', $name)) return false;
 
@@ -52,7 +67,8 @@ class AjaxHandler {
    * You can remove all the handlers what were turned on for the name of the action
    * @param string $name of the wp ajax hook
    */
-  public function removeHandlerAll($name) {
+  public function removeHandlerAll($name) 
+  {
     $name = (string)$name;
     foreach ($this->aHandlers as $iKey => $aPair) {
       if($name == $aPair['name']) {
@@ -61,7 +77,8 @@ class AjaxHandler {
     }
   }  
 
-  public function __call($name, $args = []) {
+  public function __call($name, $args = []) 
+  {
     foreach ($this->aHandlers as $aPair) {
       if($aPair['name'] == $name) call_user_func($aPair['handler'], $args);
     }

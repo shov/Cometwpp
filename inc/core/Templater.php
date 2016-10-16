@@ -1,6 +1,15 @@
 <?php
+
+/*
+ * This file is part of the Cometwpp package.
+ *
+ * (c) Alexandr Shevchenko [comet.by] alexandr@comet.by
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Cometwpp\Core;
-use Cometwpp as R;
 
 if ( ! defined( 'ABSPATH' ) ) {
   exit; // Exit if accessed directly.
@@ -12,11 +21,13 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @subpackage Core
  * @category Class
  */
-class Templater extends ResGraber {
+class Templater extends ResGraber 
+{
   /**
    * @param string $dirPath : path to target dir, who will be as root for "queries"
    */  
-  public function __construct($dirPath) {
+  public function __construct($dirPath) 
+  {
     parent::__construct([
       'dir_path' => (string)$dirPath,
       'ext' => [
@@ -33,7 +44,8 @@ class Templater extends ResGraber {
    * @param string $name of template like 'header', you can use packeges like 'feature:main', 
    * @param array $vars should be assotiative like ['varName' => 'value',]
    */  
-  public function display($name, $vars) {
+  public function display($name, $vars) 
+  {
     $fullName = makeNamePath($name);
     if($fullName === false) return false;
 
@@ -51,7 +63,8 @@ class Templater extends ResGraber {
    * @param array $vars should be assotiative like ['varName' => 'value',]
    * @return string|boolean : output|false
    */ 
-  public function render($name, $vars) {
+  public function render($name, $vars) 
+  {
     $output = '';
     
     ob_start();
@@ -62,7 +75,8 @@ class Templater extends ResGraber {
     return $output;
   }
 
-  protected function import($name) {
+  protected function import($name) 
+  {
     return parent::import($name);
   }
 }

@@ -1,6 +1,17 @@
 <?php
+
+/*
+ * This file is part of the Cometwpp package.
+ *
+ * (c) Alexandr Shevchenko [comet.by] alexandr@comet.by
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Cometwpp\Core;
-use Cometwpp as R;
+
+use Cometwpp\PrefixUserTrait;
 
 if ( ! defined( 'ABSPATH' ) ) {
   exit; // Exit if accessed directly.
@@ -12,8 +23,9 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @subpackage Core
  * @category Class
  */
-class Option {
-  use R\PrefixUserTrait;
+class Option 
+{
+  use PrefixUserTrait;
 
   protected $optionName;
 
@@ -21,7 +33,8 @@ class Option {
    *  @param string $prefix
    *  @param string $name
    */
-  public function __construct($prefix, $name) {
+  public function __construct($prefix, $name) 
+  {
     if(is_string($prefix) && !empty($prefix)) $this->setPrefix($prefix);
     $defaultOptionName = 'options';
     
@@ -31,7 +44,7 @@ class Option {
       $this->optionName = $this->prefix.$name;
     }
 
-    add_option($this->optionName, []); //if option are exists, this function do nothing
+    add_option($this->optionName, []); //if option are exists, do nothing
   }
 
   /**
@@ -39,7 +52,8 @@ class Option {
    * @param mixed $orVal
    * @return mixed : option value | $orVal
    */  
-  public function get($orVal = false) {
+  public function get($orVal = false) 
+  {
     return get_option($this->optionName, $orThisVal);
   }
 
@@ -47,7 +61,8 @@ class Option {
    * Update option value
    * @param mixed $val, if not passed, would used an empty array
    */  
-  public function update($val = []) {
+  public function update($val = []) 
+  {
     return update_option($this->optionName, $val);
   }
 }

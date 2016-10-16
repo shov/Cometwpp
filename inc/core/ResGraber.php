@@ -1,6 +1,15 @@
 <?php
+
+/*
+ * This file is part of the Cometwpp package.
+ *
+ * (c) Alexandr Shevchenko [comet.by] alexandr@comet.by
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Cometwpp\Core;
-use Cometwpp as R;
 
 if ( ! defined( 'ABSPATH' ) ) {
   exit; // Exit if accessed directly.
@@ -12,14 +21,16 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @subpackage Core
  * @category Class
  */
-class ResGraber {
+class ResGraber 
+{
   protected $dirPath;
   protected $aExt;
 
   /**
    * @param array $aConf = ['dir_path' => string, 'ext' => string|array ]
    */  
-  public function __construct($aConf) {
+  public function __construct($aConf) 
+  {
     $this->dirPath = __DIR__;
     $aExt = ['php',];
 
@@ -46,13 +57,15 @@ class ResGraber {
    * Just Including file or throw Exception
    * @param string $name like 'mylibrary-1.0', you can separate name for subpackages use ':' like 'feature:header'
    */
-  public function import($name){
+  public function import($name)
+  {
     $fullPath = makeNamePath($name);
     if(false === $fullPath) throw new \Exception('Can\'t grab this: '.((string)$name));
     include($fullPath);
   } 
 
-  protected function makeNamePath($name) {
+  protected function makeNamePath($name) 
+  {
     $name = (string)$name;
     $name = str_replace(':', DIRECTORY_SEPARATOR, $name);
     $halfulName = $this->dirPath.DIRECTORY_SEPARATOR.$name;

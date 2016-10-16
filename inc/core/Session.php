@@ -1,6 +1,18 @@
 <?php
+
+/*
+ * This file is part of the Cometwpp package.
+ *
+ * (c) Alexandr Shevchenko [comet.by] alexandr@comet.by
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Cometwpp\Core;
-use Cometwpp as R;
+
+use Cometwpp\SingletonTrait;
+use Cometwpp\PrefixUserTrait;
 
 if ( ! defined( 'ABSPATH' ) ) {
   exit; // Exit if accessed directly.
@@ -12,10 +24,12 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @subpackage Core
  * @category Class
  */
-class Session {
-  use R\SingletonTrait, R\PrefixUserTrait;
+class Session 
+{
+  use SingletonTrait, PrefixUserTrait;
 
-  public static function getInstance($aConf = []) {
+  public static function getInstance($aConf = []) 
+  {
     if(self::$_inst === null) {
       self::$_inst = new self($aConf);
     }
@@ -24,7 +38,8 @@ class Session {
 
   private $sSessionKey;
 
-  private function __construct($aConf) {
+  private function __construct($aConf) 
+  {
     if(is_string($aConf['prefix'])) $this->setPrefix($aConf['prefix']);
 
     $iMkTime = time()+30*24*60*60;
@@ -41,11 +56,13 @@ class Session {
   /**
    *  @return string : unique session key for current user
    */  
-  public function getSessionKey() {
+  public function getSessionKey() 
+  {
     return $this->sSessionKey;
   }
 
-  private function generateKey() {
+  private function generateKey() 
+  {
     require_once(ABSPATH.'wp-includes/class-phpass.php');
     $oHasher = new \PasswordHash(8, false);
     return md5($oHasher->get_random_bytes(32));

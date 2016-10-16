@@ -1,6 +1,18 @@
 <?php
+
+/*
+ * This file is part of the Cometwpp package.
+ *
+ * (c) Alexandr Shevchenko [comet.by] alexandr@comet.by
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Cometwpp\Core;
-use Cometwpp as R;
+
+use Cometwpp\SingletonTrait;
+use Cometwpp\PrefixUserTrait;
 
 if ( ! defined( 'ABSPATH' ) ) {
   exit; // Exit if accessed directly.
@@ -12,10 +24,12 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @subpackage Core
  * @category Class
  */
-final class Core {
-  use R\SingletonTrait, R\PrefixUserTrait;
+final class Core 
+{
+  use SingletonTrait, PrefixUserTrait;
 
-  public static function getInstance($configPath) {
+  public static function getInstance($configPath) 
+  {
     if(self::$_inst === null) {
       self::$_inst = new self($configPath);
     }
@@ -34,27 +48,9 @@ final class Core {
   private $cssProvider;
   private $imgProvider;
   
-  private function __construct($configPath = false) {
-    /* default.. may be wrong. Strong recomendated use config.php */
-    $aDefaultConfig = [
-      'prefix' => 'cometwpp',
-      'pathes' => [
-        'plugin' => __DIR__.'/../',
-        'js'     => __DIR__.'/../js',
-        'css'    => __DIR__.'/../css',
-        'img'    => __DIR__.'/../img',
-      ],
-      'wpoptions' => [
-        'status',
-        'settings',
-        'cart_settings',
-        'hard_filters',
-        'livesearch_settings',
-      ],
-    ];
-
+  private function __construct($configPath = false) 
+  {
     $aConfig = $this->readConfig($configPath);
-    if(!is_array($aConfig)) $aConfig = $aDefaultConfig;
 
     $this->prefix = $this->setPrefix($aConfig['prefix']);
     $this->pathes = $aConfig['pathes'];
@@ -76,11 +72,12 @@ final class Core {
    * @param string $configPath : is path to config php file
    * @return false|array
    */  
-  private function readConfig($configPath) {
-    if(!is_readable($configPath)) return false;
+  private function readConfig($configPath) 
+  {
+    if(!is_readable($configPath)) throw new Exception(sprintf("Wrong config file to read: %s", $configPath));
     
     require($configPath);
-    if(!is_array($aConfig)) return false;
+    if(!is_array($aConfig)) throw new Exception(sprintf("Wrong config php file: %s \n variable $aConfig isnt array", $configPath));
 
     return $aConfig;
   }
@@ -90,7 +87,8 @@ final class Core {
    *  call like getAjaxHandler();
    *  @return mixed
    */  
-  public function __call($getcoreobjname, $aArgs = []) {
+  public function __call($getcoreobjname, $aArgs = []) 
+  {
     if(!is_string($getcoreobjname)) return NULL;
     if(strlen($getcoreobjname) < 4) return NULL;
     if(strpos($getcoreobjname, 'get') != 0) return NULL;
@@ -105,14 +103,16 @@ final class Core {
   /**
    *  Do something if plugin has been activated in this runing
    */
-  public function pluginActivation() {
+  public function pluginActivation() 
+  {
     //$this->registry-> skip cron status
   }
 
   /**
    *  Do something if plugin has been deactivated in this runing
    */
-  public function pluginDeactivation() {
+  public function pluginDeactivation() 
+  {
     flush_rewrite_rules(false);
   }
 }

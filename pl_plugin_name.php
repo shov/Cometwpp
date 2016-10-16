@@ -1,10 +1,25 @@
 <?php
-/**
- * @package Cometwpp
- * @author Alexandr Shevchenko [comet.by] alexandr@comet.by
- * @version 3.0
+/*
+ * Plugin Name: _
+ * Version: 2.0
+ * Author: Alexandr Shevchenko [comet.by] alexandr@comet.by
+ * Author URI: http://comet.by
+ *
+ * This file is part of the Cometwpp package.
+ *
+ * (c) Alexandr Shevchenko [comet.by] alexandr@comet.by
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
+
 namespace Cometwpp;
+
+use Cometwpp\Core\Core;
+use Cometwpp\Business\Business;
+use Cometwpp\Context\CronWalker;
+use Cometwpp\Context\AdminPanel;
+use Cometwpp\Context\Client;
 
 if ( ! defined( 'ABSPATH' ) ) {
   exit; // Exit if accessed directly.
@@ -15,7 +30,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @package Cometwpp
  * @category Class
  */
-abstract class AbstractPluginControll {
+abstract class AbstractPluginControll 
+{
   protected static $_inst;
   protected $core;
 
@@ -33,9 +49,11 @@ abstract class AbstractPluginControll {
  * @package Cometwpp
  * @category Class
  */
-final class PluginName extends AbstractPluginControll {
+final class PluginName extends AbstractPluginControll 
+{
   private static $_inst;
-  public static function init() {
+  public static function init() 
+  {
     if(self::$_inst === null) {
       spl_autoload_register(function($name) {
         $nameParts = explode('\\', $name);
@@ -60,23 +78,25 @@ final class PluginName extends AbstractPluginControll {
   private $adminPanel;
   private $client;
 
-  private function __construct() {
+  private function __construct() 
+  {
     /* Up Core */
-    $this->core = Core\Core::getInstance(__DIR__.DIRECTORY_SEPARATOR.'config.php');
+    $this->core = Core::getInstance(__DIR__.DIRECTORY_SEPARATOR.'config.php');
 
     /* Make Setup */
     $this->makePluginSetup();
 
     /* Up Business */
-    $this->business = Business\Business::getInstance($this->core);
+    $this->business = Business::getInstance($this->core);
     
     /* Context instances */
-    Context\CronWalker::init($this->core, $this->business);
-    $this->adminPanel = Context\AdminPanel::getInstance($this->core, $this->business);
-    $this->client     = Context\Client::getInstance($this->core, $this->business);
+    CronWalker::init($this->core, $this->business);
+    $this->adminPanel = AdminPanel::getInstance($this->core, $this->business);
+    $this->client     = \Client::getInstance($this->core, $this->business);
   }
 
-  private function makePluginSetup() {
+  private function makePluginSetup() 
+  {
     $self = $this;
 
     if (function_exists('add_theme_support')) { 
@@ -96,7 +116,8 @@ final class PluginName extends AbstractPluginControll {
     });*/
   }
 
-  public static function getClientInstance() {
+  public static function getClientInstance() 
+  {
     self::init();
     return self::$_inst->client;
   }
