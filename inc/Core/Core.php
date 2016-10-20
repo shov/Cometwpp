@@ -28,11 +28,24 @@ final class Core
 {
     use SingletonTrait, PrefixUserTrait;
 
-    public static function getInstance($configPath)
+    /**
+     * Init procedure
+     * @param string $configPath
+     * @return null
+     */
+    public static function init($configPath = '')
     {
         if (self::$_inst === null) {
             self::$_inst = new self($configPath);
         }
+        return;
+    }
+
+    /**
+     * @return Core|null
+     */
+    public static function getInstance()
+    {
         return self::$_inst;
     }
 
@@ -48,7 +61,11 @@ final class Core
     private $cssProvider;
     private $imgProvider;
 
-    private function __construct($configPath = false)
+    /**
+     * Core constructor.
+     * @param string $configPath
+     */
+    private function __construct($configPath = '')
     {
         $aConfig = $this->readConfig($configPath);
 

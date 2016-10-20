@@ -30,10 +30,9 @@ if (!defined('ABSPATH')) {
  * @package Cometwpp
  * @category Interface
  */
-interface PluginControllInterface
+interface PluginControlInterface
 {
     public static function init();
-
     public static function getClientInstance();
 }
 
@@ -42,7 +41,7 @@ interface PluginControllInterface
  * @package Cometwpp
  * @category Class
  */
-final class PluginName implements PluginControllInterface
+final class PluginName implements PluginControlInterface
 {
     private static $_inst;
 
@@ -86,18 +85,18 @@ final class PluginName implements PluginControllInterface
     private function __construct()
     {
         /* Up Core */
-        $this->core = Core::getInstance(__DIR__ . DIRECTORY_SEPARATOR . 'config.php');
+        $this->core = Core::init(__DIR__ . DIRECTORY_SEPARATOR . 'config.php');
 
         /* Make Setup */
         $this->makePluginSetup();
 
         /* Up Business */
-        $this->business = Business::getInstance($this->core);
+        $this->business = Business::init();
 
         /* Context instances */
-        //CronWalker::init($this->core, $this->business);
-        //$this->adminPanel = AdminPanel::getInstance($this->core, $this->business);
-        //$this->client = \Client::getInstance($this->core, $this->business);
+        //CronWalker::init();
+        //$this->adminPanel = AdminPanel::getInstance();
+        //$this->client = \Client::getInstance();
     }
 
     private function makePluginSetup()
