@@ -23,6 +23,8 @@ use Cometwpp\Business\Business;
 
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly.
+} else {
+    PluginName::init(); //Start The Plugin
 }
 
 /**

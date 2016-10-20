@@ -107,13 +107,14 @@ final class Business
     /**
      * Access to business model objects
      * call like getCart();
-     * @return NULL|mixed
+     * @param string $getModelObjName
+     * @return null|mixed
      */
     public function __call($getModelObjName)
     {
-        if (!is_string($getModelObjName)) return NULL;
-        if (strlen($getModelObjName) < 4) return NULL;
-        if (strpos($getModelObjName, 'get') != 0) return NULL;
+        if (!is_string($getModelObjName)) return null;
+        if (strlen($getModelObjName) < 4) return null;
+        if (strpos($getModelObjName, 'get') != 0) return null;
 
         $prop = substr($getModelObjName, 3);
 
