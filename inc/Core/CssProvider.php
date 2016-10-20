@@ -11,8 +11,8 @@
 
 namespace Cometwpp\Core;
 
-if ( ! defined( 'ABSPATH' ) ) {
-  exit; // Exit if accessed directly.
+if (!defined('ABSPATH')) {
+    exit; // Exit if accessed directly.
 }
 
 /**
@@ -21,16 +21,13 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @subpackage Core
  * @category Class
  */
-class CssProvider extends ResGraber 
+class CssProvider extends ResGraber
 {
-  /**
-   * @param string $dirPath : path to target dir, who will be as root for "queries"
-   */  
-  public function __construct($dirPath) 
-  {
-    parent::__construct([
-      'dir_path' => (string)$dirPath,
-      'ext' => 'css',
-    ]);
-  }
+    /**
+     * @param string $dirPath : path to target dir, who will be as root for "queries"
+     */
+    public function __construct($dirPath)
+    {
+        parent::__construct(['dir_path' => (string)$dirPath, 'ext' => 'css',]);
+    }
 }

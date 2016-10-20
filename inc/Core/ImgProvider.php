@@ -11,8 +11,8 @@
 
 namespace Cometwpp\Core;
 
-if ( ! defined( 'ABSPATH' ) ) {
-  exit; // Exit if accessed directly.
+if (!defined('ABSPATH')) {
+    exit; // Exit if accessed directly.
 }
 
 /**
@@ -21,34 +21,33 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @subpackage Core
  * @category Class
  */
-class ImgProvider extends ResGraber 
+class ImgProvider extends ResGraber
 {
-  /**
-   * @param string $dirPath : path to target dir, who will be as root for "queries"
-   */  
-  public function __construct($dirPath) 
-  {
-    parent::__construct([
-      'dir_path' => (string)$dirPath,
-      'ext' => [
-        'png',
-        'jpg',
-        'gif',
-      ],
-    ]);
-  }
+    /**
+     * @param string $dirPath : path to target dir, who will be as root for "queries"
+     */
+    public function __construct($dirPath)
+    {
+        parent::__construct(['dir_path' => (string)$dirPath, 'ext' => ['png', 'jpg', 'gif',],]);
+    }
 
-  /**
-   * Take the URI for image, try get one of exists with extentions in this order: png, jpg, gif
-   * @param string $name like 'logo', you can use subpackage like 'ico:arrow_left' 
-   */  
-  public function getUri($name) 
-  {
-    return $this->makeNamePath($name);
-  }
+    /**
+     * Take the URI for image, try get one of exists with extentions in this order: png, jpg, gif
+     * @param string $name like 'logo', you can use subpackage like 'ico:arrow_left'
+     * @return string
+     */
+    public function getUri($name)
+    {
+        return $this->makeNamePath($name);
+    }
 
-  protected function import($name) 
-  {
-    return parent::import($name);
-  }
+    /**
+     * Here just alias for @see ImgProvider::getUri()
+     * @param string $name
+     * @return string
+     */
+    public function import($name)
+    {
+        return $this->getUri($name);
+    }
 }

@@ -14,8 +14,8 @@ namespace Cometwpp\Core;
 use Cometwpp\SingletonTrait;
 use Cometwpp\PrefixUserTrait;
 
-if ( ! defined( 'ABSPATH' ) ) {
-  exit; // Exit if accessed directly.
+if (!defined('ABSPATH')) {
+    exit; // Exit if accessed directly.
 }
 
 /**
@@ -24,95 +24,106 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @subpackage Core
  * @category Class
  */
-final class Core 
+final class Core
 {
-  use SingletonTrait, PrefixUserTrait;
+    use SingletonTrait, PrefixUserTrait;
 
-  public static function getInstance($configPath) 
-  {
-    if(self::$_inst === null) {
-      self::$_inst = new self($configPath);
+    public static function getInstance($configPath)
+    {
+        if (self::$_inst === null) {
+            self::$_inst = new self($configPath);
+        }
+        return self::$_inst;
     }
-    return self::$_inst;
-  }
 
-  private $prefix;
-  private $pathes;
+    private $prefix;
+    private $pathes;
 
-  private $ajaxHandler;
-  private $session;
-  private $registry;
-  
-  private $templater;
-  private $jsProvider;
-  private $cssProvider;
-  private $imgProvider;
-  
-  private function __construct($configPath = false) 
-  {
-    $aConfig = $this->readConfig($configPath);
+    private $ajaxHandler;
+    private $session;
+    private $registry;
 
-    $this->prefix = $this->setPrefix($aConfig['prefix']);
-    $this->pathes = $aConfig['pathes'];
+    private $templater;
+    private $jsProvider;
+    private $cssProvider;
+    private $imgProvider;
 
-    $this->ajaxHandler = new AjaxHandler($aConfig['prefix']);
-    $this->session  = Session::getInstance($aConfig['prefix']);
+    private function __construct($configPath = false)
+    {
+        $aConfig = $this->readConfig($configPath);
 
-    $this->registry = Registry::getInstance($aConfig['prefix'], $aConfig['wpoptions']);
+        $this->prefix = $this->setPrefix($aConfig['prefix']);
+        $this->pathes = $aConfig['pathes'];
 
-    $this->templater   = new Templater($aConfig['pathes']['tpl']);
-    $this->jsProvider  = new JsProvider($aConfig['pathes']['js']);
-    $this->cssProvider = new CssProvider($aConfig['pathes']['css']);
-    $this->imgProvider = new ImgProvider($aConfig['pathes']['img']);
-  }
+        $this->ajaxHandler = new AjaxHandler($aConfig['prefix']);
+        $this->session = Session::getInstance($aConfig['prefix']);
+
+        $this->registry = Registry::getInstance($aConfig['prefix'], $aConfig['wpoptions']);
+
+        $this->templater = new Templater($aConfig['pathes']['tpl']);
+        $this->jsProvider = new JsProvider($aConfig['pathes']['js']);
+        $this->cssProvider = new CssProvider($aConfig['pathes']['css']);
+        $this->imgProvider = new ImgProvider($aConfig['pathes']['img']);
+    }
+
+    private function setPrefix($prefix)
+    {
+        if (!is_string($prefix)) return false;
+        if (!preg_match('/^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$/', $prefix)) return false;
+        $this->prefix = $prefix;
+        return;
+    }
 
 
-  /**
-   * Try to read config php file, which should have $aConfig 
-   * @param string $configPath : is path to config php file
-   * @return false|array
-   */  
-  private function readConfig($configPath) 
-  {
-    if(!is_readable($configPath)) throw new InvalidArgumentException(sprintf("Wrong config file to read: %s", $configPath));
-    
-    require($configPath);
-    if(!is_array($aConfig)) throw new UnexpectedValueException(sprintf("Wrong config php file: %s \n variable $aConfig isnt array", $configPath));
+    /**
+     * Try to read config php file, which should have $aConfig
+     * @param string $configPath : is path to config php file
+     * @throws \InvalidArgumentException
+     * @throws \UnexpectedValueException
+     * @return false|array
+     */
+    private function readConfig($configPath)
+    {
+        if (!is_readable($configPath)) throw new \InvalidArgumentException(sprintf("Wrong config file to read: %s", $configPath));
 
-    return $aConfig;
-  }
+        $aConfig = null; //We hope take it in the config script
+        require($configPath);
+        if (!is_array($aConfig)) throw new \UnexpectedValueException(sprintf("Wrong config php file: %s \n variable $aConfig isnt array", $configPath));
 
-  /**
-   *  Acess to core-objects and core-properties
-   *  call like getAjaxHandler();
-   *  @return NULL|mixed
-   */  
-  public function __call($getCoreObjName, $aArgs = []) 
-  {
-    if(!is_string($getCoreObjName)) return NULL;
-    if(strlen($getCoreObjName) < 4) return NULL;
-    if(strpos($getCoreObjName, 'get') != 0) return NULL;
+        return $aConfig;
+    }
 
-    $prop = substr($getCoreObjName, 3);
-    $prop = substr_replace($prop, strtolower(substr($prop, 0, 1)), 0, 1);
+    /**
+     *  Acess to core-objects and core-properties
+     *  call like getAjaxHandler();
+     * @return NULL|mixed
+     */
+    public function __call($getCoreObjName, $aArgs = [])
+    {
+        if (!is_string($getCoreObjName)) return NULL;
+        if (strlen($getCoreObjName) < 4) return NULL;
+        if (strpos($getCoreObjName, 'get') != 0) return NULL;
 
-    if(property_exists($this, $prop)) return $this->$prop;
-    return NULL;
-  }
+        $prop = substr($getCoreObjName, 3);
+        $prop = substr_replace($prop, strtolower(substr($prop, 0, 1)), 0, 1);
 
-  /**
-   *  Do something if plugin has been activated in this runing
-   */
-  public function pluginActivation() 
-  {
-    //$this->registry-> skip cron status
-  }
+        if (property_exists($this, $prop)) return $this->$prop;
+        return NULL;
+    }
 
-  /**
-   *  Do something if plugin has been deactivated in this runing
-   */
-  public function pluginDeactivation() 
-  {
-    flush_rewrite_rules(false);
-  }
+    /**
+     *  Do something if plugin has been activated in this runing
+     */
+    public function pluginActivation()
+    {
+        //$this->registry-> skip cron status
+    }
+
+    /**
+     *  Do something if plugin has been deactivated in this runing
+     */
+    public function pluginDeactivation()
+    {
+        flush_rewrite_rules(false);
+    }
 }

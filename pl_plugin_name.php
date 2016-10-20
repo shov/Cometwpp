@@ -17,31 +17,24 @@ namespace Cometwpp;
 
 use Cometwpp\Core\Core;
 use Cometwpp\Business\Business;
-use Cometwpp\Context\CronWalker;
-use Cometwpp\Context\AdminPanel;
-use Cometwpp\Context\Client;
+//use Cometwpp\Context\CronWalker;
+//use Cometwpp\Context\AdminPanel;
+//use Cometwpp\Context\Client;
 
-if ( ! defined( 'ABSPATH' ) ) {
-  exit; // Exit if accessed directly.
+if (!defined('ABSPATH')) {
+    exit; // Exit if accessed directly.
 }
 
 /**
- * Base WP Plugin part
+ * Base WP Plugin
  * @package Cometwpp
- * @category Class
+ * @category Interface
  */
-abstract class AbstractPluginControll 
+interface PluginControllInterface
 {
-  protected static $_inst;
-  protected $core;
+    public static function init();
 
-  abstract public static function init();
-  abstract public static function getClientInstance();
-  abstract protected function __construct();
-  abstract protected function makePluginSetup();
-
-  final private function __wakeup() {}
-  final private function __clone() {}  
+    public static function getClientInstance();
 }
 
 /**
@@ -49,76 +42,88 @@ abstract class AbstractPluginControll
  * @package Cometwpp
  * @category Class
  */
-final class PluginName extends AbstractPluginControll 
+final class PluginName implements PluginControllInterface
 {
-  private static $_inst;
-  public static function init() 
-  {
-    if(self::$_inst === null) {
-      spl_autoload_register(function($name) {
-        $nameParts = explode('\\', $name);
-        $nameParts = array_slice($nameParts, 1);
-        $baseIncPath = __DIR__.DIRECTORY_SEPARATOR.'inc';
-        $fullPath = $baseIncPath;
+    private static $_inst;
 
-        foreach ($nameParts as $key => $part) {
-          $fullPath .= DIRECTORY_SEPARATOR.$part;
+    public static function init()
+    {
+        if (self::$_inst === null) {
+            spl_autoload_register(function ($name) {
+                $nameParts = explode('\\', $name);
+                $nameParts = array_slice($nameParts, 1);
+                $baseIncPath = __DIR__ . DIRECTORY_SEPARATOR . 'inc';
+                $fullPath = $baseIncPath;
+
+                foreach ($nameParts as $key => $part) {
+                    $fullPath .= DIRECTORY_SEPARATOR . $part;
+                }
+                $fullPath .= '.php';
+
+                if (is_readable($fullPath)) require $fullPath;
+            }, true, true);
+
+            self::$_inst = new self();
         }
-        $fullPath .= '.php';
-
-        if (is_readable($fullPath)) require $fullPath;
-      }, true, true);
-
-      self::$_inst = new self();
-    }
-  }
-
-  private $core;
-  private $business;
-  private $adminPanel;
-  private $client;
-
-  private function __construct() 
-  {
-    /* Up Core */
-    $this->core = Core::getInstance(__DIR__.DIRECTORY_SEPARATOR.'config.php');
-
-    /* Make Setup */
-    $this->makePluginSetup();
-
-    /* Up Business */
-    $this->business = Business::getInstance($this->core);
-    
-    /* Context instances */
-    CronWalker::init($this->core, $this->business);
-    $this->adminPanel = AdminPanel::getInstance($this->core, $this->business);
-    $this->client     = \Client::getInstance($this->core, $this->business);
-  }
-
-  private function makePluginSetup() 
-  {
-    $self = $this;
-
-    if (function_exists('add_theme_support')) { 
-      add_theme_support('post-thumbnails');
     }
 
-    register_activation_hook(__FILE__, function() use($self) {
-      $self->core->pluginActivation();
-    });
+    private $core;
+    private $business;
+    private $adminPanel;
+    private $client;
 
-    register_deactivation_hook(__FILE__, function() use($self) {
-      $self->core->pluginDeactivation();
-    });
-    
-    /*register_uninstall_hook(__FILE__, function(){
+    private function __wakeup()
+    {
+    }
 
-    });*/
-  }
+    private function __clone()
+    {
+    }
 
-  public static function getClientInstance() 
-  {
-    self::init();
-    return self::$_inst->client;
-  }
+    /**
+     * PluginName constructor.
+     */
+    private function __construct()
+    {
+        /* Up Core */
+        $this->core = Core::getInstance(__DIR__ . DIRECTORY_SEPARATOR . 'config.php');
+
+        /* Make Setup */
+        $this->makePluginSetup();
+
+        /* Up Business */
+        $this->business = Business::getInstance($this->core);
+
+        /* Context instances */
+        //CronWalker::init($this->core, $this->business);
+        //$this->adminPanel = AdminPanel::getInstance($this->core, $this->business);
+        //$this->client = \Client::getInstance($this->core, $this->business);
+    }
+
+    private function makePluginSetup()
+    {
+        $self = $this;
+
+        if (function_exists('add_theme_support')) {
+            add_theme_support('post-thumbnails');
+        }
+
+        register_activation_hook(__FILE__, function () use ($self) {
+            $self->core->pluginActivation();
+        });
+
+        register_deactivation_hook(__FILE__, function () use ($self) {
+            $self->core->pluginDeactivation();
+        });
+
+        /*register_uninstall_hook(__FILE__, function(){
+
+        });*/
+    }
+
+    public static function getClientInstance()
+    {
+        self::init();
+        return self::$_inst->client;
+    }
 }
