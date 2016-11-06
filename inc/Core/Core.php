@@ -12,7 +12,6 @@
 namespace Cometwpp\Core;
 
 use Cometwpp\SingletonTrait;
-use Cometwpp\PrefixUserTrait;
 
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly.
@@ -26,7 +25,7 @@ if (!defined('ABSPATH')) {
  */
 final class Core
 {
-    use SingletonTrait, PrefixUserTrait;
+    use SingletonTrait;
 
     /**
      * Init procedure
@@ -46,11 +45,12 @@ final class Core
      */
     public static function getInstance()
     {
+        self::init();
         return self::$_inst;
     }
 
     private $prefix;
-    private $pathes;
+    private $path;
 
     private $ajaxHandler;
     private $session;
@@ -70,23 +70,27 @@ final class Core
         $aConfig = $this->readConfig($configPath);
 
         $this->prefix = $this->setPrefix($aConfig['prefix']);
-        $this->pathes = $aConfig['pathes'];
+        $this->path = $aConfig['path'];
 
         $this->ajaxHandler = new AjaxHandler($aConfig['prefix']);
         $this->session = Session::getInstance($aConfig['prefix']);
 
         $this->registry = Registry::getInstance($aConfig['prefix'], $aConfig['wpoptions']);
 
-        $this->templater = new Templater($aConfig['pathes']['tpl']);
-        $this->jsProvider = new JsProvider($aConfig['pathes']['js']);
-        $this->cssProvider = new CssProvider($aConfig['pathes']['css']);
-        $this->imgProvider = new ImgProvider($aConfig['pathes']['img']);
+        $this->templater = new Templater($aConfig['path']['tpl']);
+        $this->jsProvider = new JsProvider($aConfig['path']['js']);
+        $this->cssProvider = new CssProvider($aConfig['path']['css']);
+        $this->imgProvider = new ImgProvider($aConfig['path']['img']);
     }
 
+    /**
+     * @param $prefix
+     * @return null
+     */
     private function setPrefix($prefix)
     {
-        if (!is_string($prefix)) return false;
-        if (!preg_match('/^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$/', $prefix)) return false;
+        if (!is_string($prefix)) return;
+        if (!preg_match('/^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$/', $prefix)) throw new \InvalidArgumentException(sprintf("Wrong prefix: %s", $prefix));
         $this->prefix = $prefix;
         return;
     }
@@ -134,6 +138,7 @@ final class Core
     public function pluginActivation()
     {
         //$this->registry-> skip cron status
+        return;
     }
 
     /**

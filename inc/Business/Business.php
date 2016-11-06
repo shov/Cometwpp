@@ -76,30 +76,34 @@ final class Business
     {
         $businessDir = new \DirectoryIterator(__DIR__);
         $aModelClasses = [];
+        $thisClassName = end(explode('\\', __CLASS__));
 
         foreach ($businessDir as $fileInfo) {
             if ($fileInfo->isDot() || !$fileInfo->isFile() || !$fileInfo->isReadable()) continue;
             if ('php' === $fileInfo->getExtension()) {
                 $expectedClassName = $fileInfo->getBasename('.php');
-                $file = new \SplFileObject($fileInfo->getPathname());
-                $content = $file->fread($file->getSize());
 
-                $aTokens = token_get_all($content);
-                $count = count($aTokens);
-                for ($i = 2; $i < $count; $i++) {
-                    if ((T_CLASS === $aTokens[$i - 2][0]) && (T_WHITESPACE === $aTokens[$i - 1][0]) && (T_STRING === $aTokens[$i][0])) {
-                        $foundClassName = $aTokens[$i][1];
-                        if ($expectedClassName === $foundClassName) $aModelClasses [] = $foundClassName;
+                if($thisClassName !== $expectedClassName) {
+                    $file = new \SplFileObject($fileInfo->getPathname());
+                    $content = $file->fread($file->getSize());
+
+                    $aTokens = token_get_all($content);
+                    $count = count($aTokens);
+                    for ($i = 2; $i < $count; $i++) {
+                        if ((T_CLASS === $aTokens[$i - 2][0]) && (T_WHITESPACE === $aTokens[$i - 1][0]) && (T_STRING === $aTokens[$i][0])) {
+                            $foundClassName = $aTokens[$i][1];
+                            if ($expectedClassName === $foundClassName) $aModelClasses [] = $foundClassName;
+                        }
                     }
+                    $file = null;
                 }
-                $file = null;
             }
         }
         $businessDir = null;
 
         foreach ($aModelClasses as $className) {
             $reflect = new \ReflectionClass('\\' . __NAMESPACE__ . '\\' . $className);
-
+            $this->aModels[$className] = $reflect->newInstance([$this,]);
             $reflect = null;
         }
     }
@@ -108,9 +112,10 @@ final class Business
      * Access to business model objects
      * call like getCart();
      * @param string $getModelObjName
-     * @return null|mixed
+     * @param $args
+     * @return mixed|null
      */
-    public function __call($getModelObjName)
+    public function __call($getModelObjName, $args)
     {
         if (!is_string($getModelObjName)) return null;
         if (strlen($getModelObjName) < 4) return null;

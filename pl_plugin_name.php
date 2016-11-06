@@ -1,6 +1,6 @@
 <?php
 /*
- * Plugin Name: _
+ * Plugin Name: Promo-Belmarket
  * Version: 2.0
  * Author: Alexandr Shevchenko [comet.by] alexandr@comet.by
  * Author URI: http://comet.by
@@ -17,14 +17,12 @@ namespace Cometwpp;
 
 use Cometwpp\Core\Core;
 use Cometwpp\Business\Business;
-//use Cometwpp\Context\CronWalker;
-//use Cometwpp\Context\AdminPanel;
-//use Cometwpp\Context\Client;
+use Cometwpp\Context\CronWalker;
+use Cometwpp\Context\AdminPanel;
+use Cometwpp\Context\Client;
 
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly.
-} else {
-    PluginName::init(); //Start The Plugin
 }
 
 /**
@@ -47,6 +45,9 @@ final class PluginName implements PluginControlInterface
 {
     private static $_inst;
 
+    /**
+     *
+     */
     public static function init()
     {
         if (self::$_inst === null) {
@@ -87,7 +88,8 @@ final class PluginName implements PluginControlInterface
     private function __construct()
     {
         /* Up Core */
-        $this->core = Core::init(__DIR__ . DIRECTORY_SEPARATOR . 'config.php');
+        Core::init(__DIR__ . DIRECTORY_SEPARATOR . 'config.php');
+        $this->core = Core::getInstance();
 
         /* Make Setup */
         $this->makePluginSetup();
@@ -96,11 +98,14 @@ final class PluginName implements PluginControlInterface
         $this->business = Business::init();
 
         /* Context instances */
-        //CronWalker::init();
-        //$this->adminPanel = AdminPanel::getInstance();
-        //$this->client = \Client::getInstance();
+        CronWalker::init();
+        $this->adminPanel = AdminPanel::getInstance();
+        $this->client = Client::getInstance();
     }
 
+    /**
+     *
+     */
     private function makePluginSetup()
     {
         $self = $this;
@@ -122,9 +127,14 @@ final class PluginName implements PluginControlInterface
         });*/
     }
 
+    /**
+     * @return mixed
+     */
     public static function getClientInstance()
     {
         self::init();
         return self::$_inst->client;
     }
 }
+
+PluginName::init(); //Start The Plugin

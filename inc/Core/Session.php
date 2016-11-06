@@ -40,7 +40,7 @@ class Session
 
     private function __construct($aConf)
     {
-        if (is_string($aConf['prefix'])) $this->setPrefix($aConf['prefix']);
+        if (isset($aConf['prefix']) && is_string($aConf['prefix'])) $this->setPrefix($aConf['prefix']);
 
         $iMkTime = time() + 30 * 24 * 60 * 60;
         if (!empty($_COOKIE[$this->prefix . 'session'])) {
