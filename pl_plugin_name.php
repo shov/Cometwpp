@@ -70,8 +70,6 @@ final class PluginName implements PluginControlInterface
     }
 
     private $core;
-    private $business;
-    private $adminPanel;
     private $client;
 
     private function __wakeup()
@@ -95,11 +93,11 @@ final class PluginName implements PluginControlInterface
         $this->makePluginSetup();
 
         /* Up Business */
-        $this->business = Business::init();
+        Business::init();
 
         /* Context instances */
         CronWalker::init();
-        $this->adminPanel = AdminPanel::getInstance();
+        AdminPanel::init();
         $this->client = Client::getInstance();
     }
 

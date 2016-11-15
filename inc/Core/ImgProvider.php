@@ -32,22 +32,12 @@ class ImgProvider extends ResGraber
     }
 
     /**
-     * Take the URI for image, try get one of exists with extentions in this order: png, jpg, gif
-     * @param string $name like 'logo', you can use subpackage like 'ico:arrow_left'
-     * @return string
-     */
-    public function getUri($name)
-    {
-        return $this->makeNamePath($name);
-    }
-
-    /**
      * Here just alias for @see ImgProvider::getUri()
      * @param string $name
      * @return string
      */
     public function import($name)
     {
-        return $this->getUri($name);
+        return $this->getPath($name);
     }
 }

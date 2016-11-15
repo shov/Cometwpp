@@ -36,7 +36,7 @@ class Templater extends ResGraber
      * We try to get one of exists with extensions in this order: php, html, htm
      * @param string $name of template like 'header', you can use packeges like 'feature:main',
      * @param array $vars should be assotiative like ['varName' => 'value',]
-     * @return null|bool
+     * @return bool
      */
     public function display($name, $vars = [])
     {
@@ -47,7 +47,14 @@ class Templater extends ResGraber
             $vars = [$vars,];
         }
         extract($vars, EXTR_PREFIX_INVALID, 'tplvar');
-        include($fullName);
+
+        assert(is_readable($fullName));
+        if(is_readable($fullName)) {
+            include($fullName);
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -57,7 +64,7 @@ class Templater extends ResGraber
      * @param array $vars should be assotiative like ['varName' => 'value',]
      * @return string|boolean : output|false
      */
-    public function render($name, $vars)
+    public function render($name, $vars = [])
     {
         ob_start();
         $res = $this->display($name, $vars);

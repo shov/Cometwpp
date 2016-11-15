@@ -51,6 +51,7 @@ final class Core
 
     private $prefix;
     private $path;
+    private $name;
 
     private $ajaxHandler;
     private $session;
@@ -71,6 +72,8 @@ final class Core
 
         $this->prefix = $this->setPrefix($aConfig['prefix']);
         $this->path = $aConfig['path'];
+
+        $this->name = $aConfig['name'];
 
         $this->ajaxHandler = new AjaxHandler($aConfig['prefix']);
         $this->session = Session::getInstance($aConfig['prefix']);
@@ -115,24 +118,6 @@ final class Core
     }
 
     /**
-     *  Acess to core-objects and core-properties
-     *  call like getAjaxHandler();
-     * @return NULL|mixed
-     */
-    public function __call($getCoreObjName, $aArgs = [])
-    {
-        if (!is_string($getCoreObjName)) return NULL;
-        if (strlen($getCoreObjName) < 4) return NULL;
-        if (strpos($getCoreObjName, 'get') != 0) return NULL;
-
-        $prop = substr($getCoreObjName, 3);
-        $prop = substr_replace($prop, strtolower(substr($prop, 0, 1)), 0, 1);
-
-        if (property_exists($this, $prop)) return $this->$prop;
-        return NULL;
-    }
-
-    /**
      *  Do something if plugin has been activated in this runing
      */
     public function pluginActivation()
@@ -147,5 +132,85 @@ final class Core
     public function pluginDeactivation()
     {
         flush_rewrite_rules(false);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPath()
+    {
+        return $this->path;
+    }
+
+    /**
+     * @return AjaxHandler
+     */
+    public function getAjaxHandler()
+    {
+        return $this->ajaxHandler;
+    }
+
+    /**
+     * @return Session
+     */
+    public function getSession()
+    {
+        return $this->session;
+    }
+
+    /**
+     * @return Registry
+     */
+    public function getRegistry()
+    {
+        return $this->registry;
+    }
+
+    /**
+     * @return Templater
+     */
+    public function getTemplater()
+    {
+        return $this->templater;
+    }
+
+    /**
+     * @return JsProvider
+     */
+    public function getJsProvider()
+    {
+        return $this->jsProvider;
+    }
+
+    /**
+     * @return CssProvider
+     */
+    public function getCssProvider()
+    {
+        return $this->cssProvider;
+    }
+
+    /**
+     * @return ImgProvider
+     */
+    public function getImgProvider()
+    {
+        return $this->imgProvider;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * @return null
+     */
+    public function getPrefix()
+    {
+        return $this->prefix;
     }
 }

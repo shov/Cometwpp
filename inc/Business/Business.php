@@ -13,6 +13,8 @@ namespace Cometwpp\Business;
 
 use Cometwpp\Core\Core;
 use Cometwpp\SingletonTrait;
+use Cometwpp\EntityLoaderTrait;
+use Cometwpp\EntityProviderTrait;
 
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly.
@@ -28,6 +30,8 @@ if (!defined('ABSPATH')) {
 final class Business
 {
     use SingletonTrait;
+    use EntityProviderTrait;
+    use EntityLoaderTrait;
 
     /**
      * Init procedure, create the instance
@@ -51,7 +55,7 @@ final class Business
     }
 
     private $core;
-    private $aModels;
+    private $aEntities;
 
     /**
      * Business constructor.
@@ -61,69 +65,7 @@ final class Business
         $this->core = Core::getInstance();
         assert(null != $this->core, "Core should already be initialized");
 
-        $this->aModels = [];
-        $this->modelsAutoload();
-    }
-
-    /**
-     * Look for .php files in current directory,
-     * and check every one of them contain class who has the same name what the file has.
-     * Then try to create them correctly in current namespace.
-     * Depend on spl_autoload_register @see PluginControllInterface::init()
-     * Fills $this->aModels array model-objects
-     */
-    private function modelsAutoload()
-    {
-        $businessDir = new \DirectoryIterator(__DIR__);
-        $aModelClasses = [];
-        $thisClassName = end(explode('\\', __CLASS__));
-
-        foreach ($businessDir as $fileInfo) {
-            if ($fileInfo->isDot() || !$fileInfo->isFile() || !$fileInfo->isReadable()) continue;
-            if ('php' === $fileInfo->getExtension()) {
-                $expectedClassName = $fileInfo->getBasename('.php');
-
-                if($thisClassName !== $expectedClassName) {
-                    $file = new \SplFileObject($fileInfo->getPathname());
-                    $content = $file->fread($file->getSize());
-
-                    $aTokens = token_get_all($content);
-                    $count = count($aTokens);
-                    for ($i = 2; $i < $count; $i++) {
-                        if ((T_CLASS === $aTokens[$i - 2][0]) && (T_WHITESPACE === $aTokens[$i - 1][0]) && (T_STRING === $aTokens[$i][0])) {
-                            $foundClassName = $aTokens[$i][1];
-                            if ($expectedClassName === $foundClassName) $aModelClasses [] = $foundClassName;
-                        }
-                    }
-                    $file = null;
-                }
-            }
-        }
-        $businessDir = null;
-
-        foreach ($aModelClasses as $className) {
-            $reflect = new \ReflectionClass('\\' . __NAMESPACE__ . '\\' . $className);
-            $this->aModels[$className] = $reflect->newInstance([$this,]);
-            $reflect = null;
-        }
-    }
-
-    /**
-     * Access to business model objects
-     * call like getCart();
-     * @param string $getModelObjName
-     * @param $args
-     * @return mixed|null
-     */
-    public function __call($getModelObjName, $args)
-    {
-        if (!is_string($getModelObjName)) return null;
-        if (strlen($getModelObjName) < 4) return null;
-        if (strpos($getModelObjName, 'get') != 0) return null;
-
-        $prop = substr($getModelObjName, 3);
-
-        if (!empty($this->aModels[$prop])) return $this->aModels[$prop];
-        return NULL;
+        $this->aEntities = [];
+        $this->entitiesAutoload('Business'.DIRECTORY_SEPARATOR.'Models');
     }
 }

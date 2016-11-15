@@ -12,6 +12,7 @@
 namespace Cometwpp\Context;
 
 use Cometwpp\SingletonTrait;
+use Cometwpp\AbstractContextEntityController;
 
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly.
@@ -23,7 +24,40 @@ if (!defined('ABSPATH')) {
  * @subpackage Context
  * @category Class
  */
-class Client
+class Client extends AbstractContextEntityController
 {
     use SingletonTrait;
+
+    /**
+     * Init procedure, create the instance
+     * @return null;
+     */
+    public static function init()
+    {
+        if (self::$_inst === null) {
+            self::$_inst = new self();
+        }
+        return;
+    }
+
+    /**
+     * @return Client
+     */
+    public static function getInstance()
+    {
+        self::init();
+        return self::$_inst;
+    }
+
+
+    /**
+     * Client constructor.
+     */
+    protected function __construct()
+    {
+        parent::__construct();
+
+        $this->aEntities = [];
+        $this->entitiesAutoload('Features');
+    }
 }

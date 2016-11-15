@@ -5,7 +5,7 @@ config.php
 css/*
 js/*
 img/*
-inc/lib/*
+inc/mods/*
 inc/features/*
 render/*
 tpl/*

@@ -63,7 +63,7 @@ class AjaxHandler
 
         add_action("wp_ajax_" . $this->prefix . $name, [$this, $name]);
         add_action("wp_ajax_nopriv_" . $this->prefix . $name, [$this, $name]);
-        return;
+        return null;
     }
 
     /**
