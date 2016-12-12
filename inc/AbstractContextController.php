@@ -36,7 +36,7 @@ abstract class AbstractContextController
     public function __construct($autoLoadPath)
     {
         Core::getInstance();
-        if(!is_readable($autoLoadPath) || !is_dir($autoLoadPath)) throw new \InvalidArgumentException(sprintf("Autoload path is wrong, %s given", $autoLoadPath));
+        $this->aEntities = [];
         $this->entitiesAutoload($autoLoadPath);
     }
 }
