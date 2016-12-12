@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Cometwpp\Context;
+namespace Cometwpp;
 
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly.
@@ -18,27 +18,17 @@ if (!defined('ABSPATH')) {
 /**
  * For Cron tasks
  * @package Cometwpp
- * @subpackage Context
  * @category Class
  */
-class CronWalker
+class CronWalker extends AbstractContextController
 {
-    private static $_initDone;
-    /**
-     * Init procedure, always calling if have hot called yet when instance creating
-     * @return null;
-     */
-    public static function init()
-    {
-        if (true === self::$_initDone) return;
-        self::$_initDone = true;
-    }
 
     /**
      * CronWalker constructor.
+     * @param string $autoLoadPath path to walks collects directory
      */
-    public function __construct()
+    public function __construct($autoLoadPath)
     {
-        self::init();
+       parent::__construct($autoLoadPath);
     }
 }

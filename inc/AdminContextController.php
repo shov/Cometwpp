@@ -9,12 +9,9 @@
  * file that was distributed with this source code.
  */
 
-namespace Cometwpp\Context;
+namespace Cometwpp;
 
-use Cometwpp\AbstractContextEntityController;
-use Cometwpp\AbstractAdminPage;
-use Cometwpp\SingletonTrait;
-use Cometwpp\TemplateUserTrait;
+use Cometwpp\Core\Core;
 
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly.
@@ -23,57 +20,35 @@ if (!defined('ABSPATH')) {
 /**
  * Provide plugin's admin panel's pages
  * @package Cometwpp
- * @subpackage Context
  * @category Class
  */
-class AdminPanel extends AbstractContextEntityController
+class AdminContextController extends AbstractContextController
 {
-    use SingletonTrait;
     use TemplateUserTrait;
-
-    /**
-     * Init procedure, create the instance
-     * @return null;
-     */
-    public static function init()
-    {
-        if (self::$_inst === null) {
-            self::$_inst = new self();
-        }
-        return;
-    }
-    /**
-     * @return AdminPanel
-     */
-    public static function getInstance()
-    {
-        self::init();
-        return self::$_inst;
-    }
 
     protected $aRootPagePart;
 
     /**
-     * AdminPanel constructor.
+     * AdminContextController constructor.
+     * @param string $autoLoadPath path to admin pages directory
      */
-    protected function __construct()
+    public function __construct($autoLoadPath)
     {
-        parent::__construct();
+        parent::__construct($autoLoadPath);
         $this->wouldUseTemplate();
 
         $this->setupAdminPanel();
 
         $this->aRootPagePart = [];
-        $this->aEntities = [];
-        $this->entitiesAutoload('Admin');
     }
 
     protected function setupAdminPanel()
     {
         $self = $this;
         add_action('admin_menu', function () use ($self) {
-            $name = $self->core->getName();
-            $slug = $self->core->getPrefix() . 'plugin_root_menu';
+            $core = Core::getInstance();
+            $name = $core->getName();
+            $slug = $core->getPrefix() . 'plugin_root_menu';
             add_menu_page($name, $name, 'edit_posts', $slug, function () use ($self) {
                 $self->rootAdminPage();
             }, "dashicons-admin-site", 070);

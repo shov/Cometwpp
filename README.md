@@ -1,1 +1,1 @@
-PHP 5.5 required
+PHP **5.6+** required

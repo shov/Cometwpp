@@ -1,14 +1,4 @@
 <?php
-
-/*
- * This file is part of the Cometwpp package.
- *
- * (c) Alexandr Shevchenko [comet.by] alexandr@comet.by
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 namespace Cometwpp;
 
 use Cometwpp\Core\Core;
@@ -30,23 +20,46 @@ trait EntityLoaderTrait
      * Then try to create them correctly in current namespace.
      * Depend on spl_autoload_register @see PluginControllInterface::init()
      * Fills $this->aEntities array objects
+     * @param string $path
+     * @param bool|string $deepStep for entities with own folder (name entity class must be the same name of those folder)
+     *                    DO NOT use this argument manually
+     * @throws \Exception
      */
-    protected function entitiesAutoload($path = '')
+    protected function entitiesAutoload($path = '', $deepStep = false)
     {
+        $core = Core::getInstance();
+
         if (!isset($this->aEntities)) throw new \Exception(sprintf('Trait extender should has $aEntities filed'));
-        if (!isset($this->core) || !($this->core instanceof Core)) throw new \Exception(sprintf("Trait extender has no core field or its incorrect"));
 
         $path = (string)$path;
-        $fullPath = $this->core->getPath()['inc'] . DIRECTORY_SEPARATOR . $path;
+        $fullPath = $path;
+
+        if(false === $deepStep) {
+            $fullPath = $core->getPath()['inc'] . DIRECTORY_SEPARATOR . $path;
+        }
+
         if (!is_dir($fullPath)) throw new \InvalidArgumentException(sprintf("Path should be an directory, '%s' given. Path part is %s", $fullPath, $path));
 
-        $businessModelsDir = new \DirectoryIterator($fullPath);
+        $entityDir = new \DirectoryIterator($fullPath);
         $aEntityClasses = [];
 
-        foreach ($businessModelsDir as $fileInfo) {
-            if ($fileInfo->isDot() || !$fileInfo->isFile() || !$fileInfo->isReadable()) continue;
+        foreach ($entityDir as $fileInfo) {
+            if ($fileInfo->isDot() || !$fileInfo->isReadable()) continue;
+
+            if((false === $deepStep) && $fileInfo->isDir()) { //go one step to the deep the entity, who has own folder
+                $pathToStep = $fileInfo->getPathname();
+                $lookingFor = $fileInfo->getBasename();
+                $this->entitiesAutoload($pathToStep, $lookingFor);
+            }
+
+            if(!$fileInfo->isFile()) continue;
+
             if ('php' === $fileInfo->getExtension()) {
                 $expectedClassName = $fileInfo->getBasename('.php');
+
+                if(false !== $deepStep) {
+                    if($deepStep != $expectedClassName) continue;
+                }
 
                 $file = new \SplFileObject($fileInfo->getPathname());
                 $content = $file->fread($file->getSize());

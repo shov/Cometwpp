@@ -22,22 +22,21 @@ if (!defined('ABSPATH')) {
  * @package Cometwpp
  * @category Class
  */
-abstract class AbstractContextEntityController
+abstract class AbstractContextController
 {
     use EntityProviderTrait;
     use EntityLoaderTrait;
 
-    protected $core;
     protected $aEntities;
 
     /**
      * AbstractContextEntityController constructor.
+     * @param string $autoLoadPath
      */
-    protected function __construct()
+    public function __construct($autoLoadPath)
     {
-        $this->core = Core::getInstance();
-        assert(null != $this->core, "Core should already be initialized");
-
-        $this->aEntities = [];
+        Core::getInstance();
+        if(!is_readable($autoLoadPath) || !is_dir($autoLoadPath)) throw new \InvalidArgumentException(sprintf("Autoload path is wrong, %s given", $autoLoadPath));
+        $this->entitiesAutoload($autoLoadPath);
     }
 }

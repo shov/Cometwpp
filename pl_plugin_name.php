@@ -16,10 +16,6 @@
 namespace Cometwpp;
 
 use Cometwpp\Core\Core;
-use Cometwpp\Business\Business;
-use Cometwpp\Context\CronWalker;
-use Cometwpp\Context\AdminPanel;
-use Cometwpp\Context\Client;
 
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly.
@@ -46,7 +42,7 @@ final class PluginName implements PluginControlInterface
     private static $_inst;
 
     /**
-     *
+     * Init: start the plugin
      */
     public static function init()
     {
@@ -69,9 +65,6 @@ final class PluginName implements PluginControlInterface
         }
     }
 
-    private $core;
-    private $client;
-
     private function __wakeup()
     {
     }
@@ -92,13 +85,12 @@ final class PluginName implements PluginControlInterface
         /* Make Setup */
         $this->makePluginSetup();
 
-        /* Up Business */
-        Business::init();
-
         /* Context instances */
-        CronWalker::init();
-        AdminPanel::init();
-        $this->client = Client::getInstance();
+        $contextManager = ContextManager::getInstance();
+        $contextManager::registerContextController('business', new ContextController('Models'));
+        $contextManager::registerContextController('cron', new CronWalker('Walk'));
+        $contextManager::registerContextController('admin', new AdminContextController('Admin'));
+        $contextManager::registerContextController('client', new ContextController('Features'));
     }
 
     /**
@@ -113,11 +105,13 @@ final class PluginName implements PluginControlInterface
         }
 
         register_activation_hook(__FILE__, function () use ($self) {
-            $self->core->pluginActivation();
+            $core = Core::getInstance();
+            $core->pluginActivation();
         });
 
         register_deactivation_hook(__FILE__, function () use ($self) {
-            $self->core->pluginDeactivation();
+            $core = Core::getInstance();
+            $core->pluginDeactivation();
         });
 
         /*register_uninstall_hook(__FILE__, function(){
@@ -131,7 +125,7 @@ final class PluginName implements PluginControlInterface
     public static function getClientInstance()
     {
         self::init();
-        return self::$_inst->client;
+        return ContextManager::getContextController('client');
     }
 }
 
