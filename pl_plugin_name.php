@@ -1,6 +1,6 @@
 <?php
 /*
- * Plugin Name: Promo-Belmarket
+ * Plugin Name: PluginName
  * Version: 2.0
  * Author: Alexandr Shevchenko [comet.by] alexandr@comet.by
  * Author URI: http://comet.by
