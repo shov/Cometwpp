@@ -87,10 +87,10 @@ final class PluginName implements PluginControlInterface
 
         /* Context instances */
         $contextManager = ContextManager::getInstance();
-        $contextManager::registerContextController('business', new ContextController('Models'));
+        $contextManager::registerContextController('business', new ContextController('Model'));
         $contextManager::registerContextController('cron', new CronWalker('Walk'));
         $contextManager::registerContextController('admin', new AdminContextController('Admin'));
-        $contextManager::registerContextController('client', new ContextController('Features'));
+        $contextManager::registerContextController('client', new ContextController('Feature'));
     }
 
     /**
