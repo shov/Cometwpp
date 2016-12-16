@@ -63,7 +63,10 @@ trait AjaxUserTrait
                 $deepData = $data[$argNameForArrays];
                 if (!isset($deepData)) $this->ajaxFail();
                 if(is_array($deepData)) {
-                    if(empty($deepData)) continue;
+                    if(empty($deepData)) {
+                        if($noEmpty) $this->ajaxFail();
+                        continue;
+                    }
                 } else {
                     $deepData = [$deepData,];
                 }
