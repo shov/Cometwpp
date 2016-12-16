@@ -41,12 +41,13 @@ trait AjaxUserTrait
     }
 
     /**
-     * @param $data
-     * @param $args
+     * @param array $data
+     * @param array|string $args
      * @param bool $noEmpty
-     * @return null;
+     * @param callable|null $callback
+     * @return null ;
      */
-    protected function ajaxRequiredArgs($data, $args = [], $noEmpty = true)
+    protected function ajaxRequiredArgs($data, $args = [], $noEmpty = true, callable $callback = null)
     {
         if (!is_array($data)) $this->ajaxFail();
         if (empty($data)) $this->ajaxFail();
@@ -55,14 +56,19 @@ trait AjaxUserTrait
 
         assert(is_array($args));
         if (!is_array($args)) return null;
-
         if (empty($args)) return null;
 
         foreach ($args as $argNameForArrays => $arg) {
             if (is_array($arg)) {
-                if (!isset($data[$argNameForArrays])) $this->ajaxFail();
-                $this->ajaxRequiredArgs($data[$argNameForArrays], $arg, $noEmpty);
-                return null;
+                $deepData = $data[$argNameForArrays];
+                if (!isset($deepData)) $this->ajaxFail();
+                if(is_array($deepData)) {
+                    if(empty($deepData)) continue;
+                } else {
+                    $deepData = [$deepData,];
+                }
+                $this->ajaxRequiredArgs($deepData, $arg, $noEmpty, $callback);
+                continue;
             }
 
             if (!isset($data[$arg])) $this->ajaxFail();
@@ -71,6 +77,10 @@ trait AjaxUserTrait
                 if (!is_numeric($data[$arg]) && !is_bool($data[$arg])) {
                     if (empty($data[$arg])) $this->ajaxFail();
                 }
+            }
+
+            if(isset($callback)) {
+                if(false === call_user_func($callback, $data[$arg])) $this->ajaxFail();
             }
         }
     }
