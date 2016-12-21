@@ -65,7 +65,7 @@ class AdminContextController extends AbstractContextController
         foreach ($this->aRootPagePart as $aPagePart) {
             $html .= $aPagePart->render();
         }
-        $this->templater->display('admin:index', [
+        $this->templater->display('Admin:index', [
             'part' => $html,
         ]);
     }

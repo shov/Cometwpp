@@ -80,13 +80,20 @@ class ResGraber
     /**
      * Return content of res file as is
      * @param $name
+     * @param bool $addTags
      * @return string
      * @throws \Exception
      */
-    public function getContent($name)
+    public function getContent($name, $addTags = false)
     {
         $path = $this->getPath($name);
         $html = file_get_contents($path);
+        if(false !== $addTags) {
+            $addTags = (string)$addTags;
+            if(empty($addTags)) throw new \Exception(sprintf("Cant wrap %s, empty tags given", $name));
+
+            $html = '<' . $addTags . '>' . $html . '</' . $addTags . '>';
+        }
         if(false === $html) throw new \Exception(sprintf("Cant read the res file, \"%s\"", $name));
         return $html;
     }

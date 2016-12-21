@@ -42,4 +42,15 @@ class CssProvider extends ResGraber
         wp_register_style($regName, $this->getPath($name), $dependence);
         wp_enqueue_style($regName);
     }
+
+    /**
+     * Return content of css file as is
+     * @param $name
+     * @param string $addTags
+     * @return string
+     */
+    public function getContent($name, $addTags = 'style')
+    {
+        return parent::getContent($name, $addTags);
+    }
 }

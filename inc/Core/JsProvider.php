@@ -49,4 +49,15 @@ class JsProvider extends ResGraber
         $regName = $this->getClearName($name);
         wp_localize_script($regName, $varName, $varValue);
     }
+
+    /**
+     * Return content of js file as is
+     * @param $name
+     * @param string $addTags
+     * @return string
+     */
+    public function getContent($name, $addTags = 'script')
+    {
+        return parent::getContent($name, $addTags);
+    }
 }
