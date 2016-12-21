@@ -70,7 +70,7 @@ class AdminContextController extends AbstractContextController
         ]);
     }
 
-    public function addToRootPage(AbstractAdminPage $pagePart)
+    public function addToRootPage(RenderableThingInterface $pagePart)
     {
         $this->aRootPagePart[] = $pagePart;
     }

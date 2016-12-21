@@ -84,7 +84,7 @@ trait EntityLoaderTrait
 
         foreach ($aEntityClasses as $className) {
             $reflect = new \ReflectionClass($nameSpace . $className);
-            $this->aEntities[$className] = $reflect->newInstanceArgs([$this,]);
+            $this->aEntities[$className] = $reflect->newInstanceArgs();
             $reflect = null;
         }
     }

@@ -7,10 +7,11 @@ if (!defined('ABSPATH')) {
 
 /**
  * Can display some html
- * @package Cometwpp
- * @category Class
+ * @package PlPerec
+ * @category Interface
  */
-abstract class AbstractAdminPage
+
+interface RenderableThingInterface
 {
-    abstract public function render();
+    public function render();
 }
