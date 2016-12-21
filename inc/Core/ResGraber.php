@@ -62,7 +62,7 @@ class ResGraber
     {
         $fullPath = $this->makeNamePath($name);
         if (false === $fullPath) throw new \UnexpectedValueException('Can\'t grab this: ' . ((string)$name));
-        if(is_readable($fullPath)) {
+        if (is_readable($fullPath)) {
             include($fullPath);
             return true;
         }
@@ -92,11 +92,26 @@ class ResGraber
     }
 
     /**
+     * Make name with prefix and looking good for wp hooks
+     * @param $name
+     * @return string
+     */
+    protected function getClearName($name)
+    {
+        $name = (string)$name;
+        $name = str_replace(':', '_', $name);
+        $name = strtolower($name);
+        $prefix = Core::getInstance()->getPrefix();
+        return $prefix . '_' . $name;
+    }
+
+    /**
      * @param string $name
      * @return null|string
      */
-    public function getPath($name) {
-        $name = (string) $name;
+    public function getPath($name)
+    {
+        $name = (string)$name;
         assert(!empty($name));
 
         $res = $this->makeNamePath($name);
@@ -105,11 +120,20 @@ class ResGraber
         return $res;
     }
 
-    public function getUrl($name) {
-        $name = (string) $name;
+    public function getUrl($name)
+    {
+        $name = (string)$name;
         assert(!empty($name));
 
         $path = $this->getPath($name);
         return str_replace($_SERVER['DOCUMENT_ROOT'], site_url(), $path);
+    }
+
+    public function importInHook($name, $wpHook)
+    {
+        $self = $this;
+        add_action($wpHook, function () use ($self, $name) {
+            $self->import($name);
+        });
     }
 }

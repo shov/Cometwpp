@@ -30,4 +30,23 @@ class JsProvider extends ResGraber
     {
         parent::__construct(['dir_path' => (string)$dirPath, 'ext' => 'js',]);
     }
+
+    /**
+     * Register script with WP functions
+     * @param $name
+     * @param array $dependence
+     */
+    public function registerSript($name, $dependence = [], $bInFooter = true)
+    {
+        $regName = $this->getClearName($name);
+        $version = false; // don't use it yet
+        wp_register_script($regName, $this->getPath($name), $dependence, $version, $bInFooter);
+        wp_enqueue_script($regName);
+    }
+
+    public function addVarToScript($name, $varName, $varValue = [])
+    {
+        $regName = $this->getClearName($name);
+        wp_localize_script($regName, $varName, $varValue);
+    }
 }

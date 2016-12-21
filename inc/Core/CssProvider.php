@@ -30,4 +30,16 @@ class CssProvider extends ResGraber
     {
         parent::__construct(['dir_path' => (string)$dirPath, 'ext' => 'css',]);
     }
+
+    /**
+     * Register style with WP functions
+     * @param $name
+     * @param array $dependence
+     */
+    public function registerStyle($name, $dependence = [])
+    {
+        $regName = $regName = $this->getClearName($name);
+        wp_register_style($regName, $this->getPath($name), $dependence);
+        wp_enqueue_style($regName);
+    }
 }
