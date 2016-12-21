@@ -76,7 +76,7 @@ trait EntityLoaderTrait
 
             }
         }
-        $businessDir = null;
+        $entityDir = null;
 
         $nameSpace = '\\' . explode("\\", __NAMESPACE__)[0];
         $nameSpace .= '\\' . str_replace(DIRECTORY_SEPARATOR, "\\", $path) . '\\';

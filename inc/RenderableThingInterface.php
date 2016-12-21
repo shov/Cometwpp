@@ -7,7 +7,7 @@ if (!defined('ABSPATH')) {
 
 /**
  * Can display some html
- * @package PlPerec
+ * @package Cometwpp
  * @category Interface
  */
 

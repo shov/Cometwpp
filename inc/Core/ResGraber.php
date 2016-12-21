@@ -69,6 +69,28 @@ class ResGraber
         return false;
     }
 
+    public function importInHook($name, $wpHook)
+    {
+        $self = $this;
+        add_action($wpHook, function () use ($self, $name) {
+            $self->import($name);
+        });
+    }
+
+    /**
+     * Return content of res file as is
+     * @param $name
+     * @return string
+     * @throws \Exception
+     */
+    public function getContent($name)
+    {
+        $path = $this->getPath($name);
+        $html = file_get_contents($path);
+        if(false === $html) throw new \Exception(sprintf("Cant read the res file, \"%s\"", $name));
+        return $html;
+    }
+
     /**
      * @param $name
      * @return null|string
@@ -127,13 +149,5 @@ class ResGraber
 
         $path = $this->getPath($name);
         return str_replace($_SERVER['DOCUMENT_ROOT'], site_url(), $path);
-    }
-
-    public function importInHook($name, $wpHook)
-    {
-        $self = $this;
-        add_action($wpHook, function () use ($self, $name) {
-            $self->import($name);
-        });
     }
 }
