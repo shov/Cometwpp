@@ -26,7 +26,8 @@ class AdminContextController extends AbstractContextController
 {
     use TemplateUserTrait;
 
-    protected $aRootPagePart;
+    protected $aRootPagePart = [];
+    protected $aForAdminScriptCallback = [];
 
     /**
      * AdminContextController constructor.
@@ -36,12 +37,12 @@ class AdminContextController extends AbstractContextController
     {
         parent::__construct($autoLoadPath);
         $this->wouldUseTemplate();
-
         $this->setupAdminPanel();
-
-        $this->aRootPagePart = [];
     }
 
+    /**
+     * Set menu render, page, scripts on WP hooks
+     */
     protected function setupAdminPanel()
     {
         $self = $this;
@@ -54,11 +55,15 @@ class AdminContextController extends AbstractContextController
             }, "dashicons-admin-site", 070);
         });
 
-        add_action('admin_enqueue_scripts', function () {
+        add_action('admin_enqueue_scripts', function () use ($self) {
             wp_enqueue_media();
+            $self->scriptInAdmin();
         });
     }
 
+    /**
+     * Create and render plugin main admin page, pass registered parts as content
+     */
     protected function rootAdminPage()
     {
         $html = '';
@@ -70,8 +75,32 @@ class AdminContextController extends AbstractContextController
         ]);
     }
 
+
+    /**
+     * Register main admin page part
+     * @param RenderableThingInterface $pagePart
+     */
     public function addToRootPage(RenderableThingInterface $pagePart)
     {
         $this->aRootPagePart[] = $pagePart;
+    }
+
+    /**
+     * Call all registered callbacks for admin script load hook
+     */
+    protected function scriptInAdmin()
+    {
+        foreach ($this->aForAdminScriptCallback as $hook) {
+            call_user_func($hook);
+        }
+    }
+
+    /**
+     * Register callback with script/style registration for admin script load hook
+     * @param callable $hook
+     */
+    public function registerScriptInAdmin(callable $hook)
+    {
+        $this->aForAdminScriptCallback[] = $hook;
     }
 }

@@ -146,6 +146,7 @@ class ResGraber
         $res = $this->makeNamePath($name);
         assert(is_readable($res), sprintf('For %s', $res));
 
+        if(!is_readable($res)) return false;
         return $res;
     }
 

@@ -52,7 +52,7 @@ class Option
      * @param mixed $orVal
      * @return mixed : option value | $orVal
      */
-    public function get($orVal = false)
+    public function get($orVal = null)
     {
         return get_option($this->optionName, $orVal);
     }

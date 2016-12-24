@@ -32,15 +32,19 @@ class CssProvider extends ResGraber
     }
 
     /**
-     * Register style with WP functions
+     * Try to register style with WP functions
      * @param $name
      * @param array $dependence
      */
     public function registerStyle($name, $dependence = [])
     {
         $regName = $regName = $this->getClearName($name);
-        wp_register_style($regName, $this->getPath($name), $dependence);
-        wp_enqueue_style($regName);
+        $path = $this->getPath($name);
+        assert(false !== $path);
+        if (false !== $path) {
+            wp_register_style($regName, $path, $dependence);
+            wp_enqueue_style($regName);
+        }
     }
 
     /**

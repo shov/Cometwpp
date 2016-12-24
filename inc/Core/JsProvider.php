@@ -32,7 +32,7 @@ class JsProvider extends ResGraber
     }
 
     /**
-     * Register script with WP functions
+     * Try to register script with WP functions
      * @param $name
      * @param array $dependence
      */
@@ -40,8 +40,13 @@ class JsProvider extends ResGraber
     {
         $regName = $this->getClearName($name);
         $version = false; // don't use it yet
-        wp_register_script($regName, $this->getPath($name), $dependence, $version, $bInFooter);
-        wp_enqueue_script($regName);
+
+        $path = $this->getPath($name);
+        assert(false !== $path);
+        if (false !== $path) {
+            wp_register_script($regName, $path, $dependence, $version, $bInFooter);
+            wp_enqueue_script($regName);
+        }
     }
 
     public function addVarToScript($name, $varName, $varValue = [])
