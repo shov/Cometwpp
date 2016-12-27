@@ -11,6 +11,7 @@
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
+ * TODO: Composer, all in inc/ make the project with Cometwpp, all another (with Features, Admin Walk, css, tpl, render etc) will be a parts of current realisation and I would use gist for them
  */
 
 namespace Cometwpp;
