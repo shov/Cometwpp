@@ -38,6 +38,7 @@ class AdminContextController extends AbstractContextController
         parent::__construct($autoLoadPath);
         $this->wouldUseTemplate();
         $this->setupAdminPanel();
+        $this->registerAjaxSheaf();
     }
 
     /**
@@ -102,5 +103,16 @@ class AdminContextController extends AbstractContextController
     public function registerScriptInAdmin(callable $hook)
     {
         $this->aForAdminScriptCallback[] = $hook;
+    }
+
+    /**
+     * Register all entities thought SheafAjaxSetter
+     */
+    protected function registerAjaxSheaf() {
+        $sheafAjaxSetter = new SheafAjaxSetter();
+        foreach ($this->aEntities as $entity) {
+            $sheafAjaxSetter->addCandidate($entity);
+        }
+        $sheafAjaxSetter->registerCandidates();
     }
 }

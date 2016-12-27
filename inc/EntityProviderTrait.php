@@ -9,6 +9,7 @@ if (!defined('ABSPATH')) {
  * Entity Provider Trait can help you take someone access to objects like model or feature instances
  * @package Cometwpp
  * @category Trait
+ * TODO: Trait EntityLordTrait
  */
 trait EntityProviderTrait
 {

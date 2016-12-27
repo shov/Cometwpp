@@ -11,6 +11,7 @@ if (!defined('ABSPATH')) {
  * Entity Loader Trait can help u to load some classes like models or features
  * @package Cometwpp
  * @category Trait
+ * TODO: Trait EntityLordTrait
  */
 trait EntityLoaderTrait
 {

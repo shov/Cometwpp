@@ -52,12 +52,13 @@ class AjaxHandler
      * *more* Usually ajax hook ends for die(), that's why have no sense create more than one hook for each and any unique name
      * @param string $name : name of the wp ajax hook, looks like hook_name for example
      * @param callable $handler : clousure, do it like this $ajaxHandler->addHandler('hook_name', function() { echo 'resp'; die(); });
-     * @return null|bool
+     * @return bool|null
+     * @throws \Exception
      */
     public function addHandler($name, callable $handler)
     {
         $name = (string)$name;
-        if (!preg_match('/^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$/', $name)) return false;
+        if (false === $this->nameValidation($name)) throw new \Exception(sprintf("Bad name for ajax hook, %s given", $name));
 
         $this->aHandlers [] = ['name' => $name, 'handler' => $handler,];
 
@@ -89,5 +90,13 @@ class AjaxHandler
         foreach ($this->aHandlers as $aPair) {
             if ($aPair['name'] == $name) call_user_func($aPair['handler'], $args);
         }
+        exit;
+    }
+
+    public function nameValidation($name)
+    {
+        $name = (string)$name;
+        if (!preg_match('/^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$/', $name)) return false;
+        return true;
     }
 }
