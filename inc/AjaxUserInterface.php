@@ -10,7 +10,8 @@ if (!defined('ABSPATH')) {
  * @package Cometwpp
  * @category Interface
  */
-interface AjaxUserInterface {
+interface AjaxUserInterface
+{
     /**
      * Used @see SheafAjaxSetter
      * @return array

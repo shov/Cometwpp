@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- *  @var $aConfig an array who contains all one-place-control settings of the plugin
+ *  @var array $aConfig - is an array who contains all one-place-control settings of the plugin
  */
 $aConfig = [
     'name'  => 'Плагин',
