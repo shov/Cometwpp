@@ -13,8 +13,7 @@ if (!defined('ABSPATH')) {
  * @package Cometwpp
  * @category Class
  */
-abstract class AbstractWpdbUser
-{
+abstract class AbstractSqlBasedModel{
     protected $db;
 
     public function __construct()

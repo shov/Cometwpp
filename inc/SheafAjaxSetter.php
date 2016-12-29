@@ -75,11 +75,11 @@ class SheafAjaxSetter
 
     /**
      * Add candidate's sheaf sets to queue for full register
-     * @param AjaxUserTrait $candidate
+     * @param AjaxUserInterface $candidate
      * @return null
      * @throws \Exception
      */
-    public function addCandidate(AjaxUserTrait $candidate)
+    public function addCandidate(AjaxUserInterface $candidate)
     {
         $aCandidateSheafStore = $candidate->getSheafStore();
 

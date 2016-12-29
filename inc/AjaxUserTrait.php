@@ -11,7 +11,6 @@ if (!defined('ABSPATH')) {
  * Take some often-use method for class contains ajax methods
  * @package Cometwpp
  * @category Trait
- * TODO: Interfase AjaxUserInterfase
  */
 trait AjaxUserTrait
 {
