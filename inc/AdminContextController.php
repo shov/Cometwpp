@@ -71,9 +71,7 @@ class AdminContextController extends AbstractContextController
         foreach ($this->aRootPagePart as $aPagePart) {
             $html .= $aPagePart->render();
         }
-        $this->templater->display('Admin:index', [
-            'part' => $html,
-        ]);
+        $this->templater->display('Admin:index', ['part' => $html,]);
     }
 
 
@@ -108,7 +106,8 @@ class AdminContextController extends AbstractContextController
     /**
      * Register all entities thought SheafAjaxSetter
      */
-    protected function registerAjaxSheaf() {
+    protected function registerAjaxSheaf()
+    {
         $sheafAjaxSetter = new SheafAjaxSetter();
         foreach ($this->aEntities as $entity) {
             $sheafAjaxSetter->addCandidate($entity);

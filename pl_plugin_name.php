@@ -11,7 +11,7 @@
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- * TODO: Composer, all in inc/ make the project with Cometwpp, all another (with Features, Admin Walk, css, tpl, render etc) will be a parts of current realisation and I would use gist for them
+ * TODO: Install Script
  */
 
 namespace Cometwpp;
@@ -81,17 +81,17 @@ final class PluginName implements PluginControlInterface
     {
         /* Up Core */
         Core::init(__DIR__ . DIRECTORY_SEPARATOR . 'config.php');
-        $this->core = Core::getInstance();
+        $core = Core::getInstance();
 
         /* Make Setup */
         $this->makePluginSetup();
 
         /* Context instances */
         $contextManager = ContextManager::getInstance();
-        $contextManager::registerContextController('business', new ContextController('Model'));
-        $contextManager::registerContextController('cron', new CronWalker('Walk'));
-        $contextManager::registerContextController('admin', new AdminContextController('Admin'));
-        $contextManager::registerContextController('client', new ContextController('Feature'));
+        $contextManager::registerContextController('business', new ContextController($core->getPath('Model')));
+        $contextManager::registerContextController('cron', new CronWalker($core->getPath('Walk')));
+        $contextManager::registerContextController('admin', new AdminContextController($core->getPath('Admin')));
+        $contextManager::registerContextController('client', new ContextController($core->getPath('Feature')));
     }
 
     /**

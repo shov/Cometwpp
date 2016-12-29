@@ -135,10 +135,19 @@ final class Core
     }
 
     /**
+     * @param null|string $spec
      * @return mixed
      */
-    public function getPath()
+    public function getPath($spec = null)
     {
+        if (!is_null($spec)) {
+            $spec = (string)$spec;
+            if (isset($this->path[$spec])) {
+                return $this->path[$spec];
+            } else {
+                return null;
+            }
+        }
         return $this->path;
     }
 

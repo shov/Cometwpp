@@ -13,7 +13,8 @@ if (!defined('ABSPATH')) {
  * @package Cometwpp
  * @category Class
  */
-abstract class AbstractSqlBasedModel{
+abstract class AbstractSqlBasedModel
+{
     protected $db;
 
     public function __construct()
@@ -31,12 +32,13 @@ abstract class AbstractSqlBasedModel{
      * @return string
      * @throws \Exception
      */
-    protected function addPrefix($table) {
+    protected function addPrefix($table)
+    {
         $table = (string)$table;
-        if(empty($table)) throw new \Exception(sprintf('Table name cant be an empty!'));
+        if (empty($table)) throw new \Exception(sprintf('Table name cant be an empty!'));
 
-        if(0 === strpos($table, $this->db->prefix)) return $table;
-        return $this->db->prefix.$table;
+        if (0 === strpos($table, $this->db->prefix)) return $table;
+        return $this->db->prefix . $table;
     }
 
     /**
@@ -44,9 +46,10 @@ abstract class AbstractSqlBasedModel{
      * @param string $sqlFieldsString
      * @return null
      */
-    protected function createTableIfNotExists($table, $sqlFieldsString) {
+    protected function createTableIfNotExists($table, $sqlFieldsString)
+    {
         $table = $this->addPrefix($table);
-        if($this->tableExists($table)) return null;
+        if ($this->tableExists($table)) return null;
         $query = 'CREATE TABLE ' . $table . ' (
                     id       int(11)  NOT NULL AUTO_INCREMENT,
                     ' . $sqlFieldsString . '
@@ -58,7 +61,8 @@ abstract class AbstractSqlBasedModel{
     /**
      * @param string $table
      */
-    protected function dropTable($table) {
+    protected function dropTable($table)
+    {
         $table = $this->addPrefix($table);
         $query = $this->db->prepare('DROP TABLE IF EXISTS %s', $table);
         $this->db->query($query);
@@ -68,10 +72,11 @@ abstract class AbstractSqlBasedModel{
      * @param string $table
      * @return bool
      */
-    protected function tableExists($table) {
+    protected function tableExists($table)
+    {
         $table = $this->addPrefix($table);
-        $query = "SHOW TABLES LIKE '".$table."'";
-        $res =  $this->db->get_var($query);
+        $query = "SHOW TABLES LIKE '" . $table . "'";
+        $res = $this->db->get_var($query);
 
         return (null !== $res);
     }
