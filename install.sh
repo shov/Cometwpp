@@ -16,21 +16,20 @@ if [ ! -z "$1" ]; then
     rm -f ./.gitignore &&
     echo "Git files has been removed"
 
-    cat ./config.example.php | sed --quiet "s/cometwpp_plugin_fw/$name/g" > ./config.example.php &&
-    cat ./config.example.php | sed --quiet "s/cometwpp_plugin_fw_prefix/$name-prefix/g" > ./config.example.php &&
-    mv ./config.example.php ./config.php &&
+    cat ./config.example.php | sed --quiet "s/cometwpp_plugin_fw_prefix/$name-prefix/g" | sed --quiet "s/cometwpp_plugin_fw/$name/g" > ./config.php &&
+    rm -f ./config.example.php &&
     echo "* Config done"
 
     find ./ -type f -name "*.php" -print0 | xargs -0 sed -i --quiet "s/Cometwpp/$name/g"
     echo "* Namespace done"
 
-    cat ./pl_plugin_name.php | sed --quiet "s/PluginName/$name/g" > ./pl_plugin_name.php  &&
-    mv ./pl_plugin_name.php ./"$name".php &&
+    cat ./pl_plugin_name.php | sed --quiet "s/PluginName/$name/g" > ./"$name".php  &&
+    rm -f ./pl_plugin_name.php &&
     echo "* Plugin Name done"
 
     cd .. &&
     mv -T ./Cometwpp ./"$name" &&
-    cd ./"$name" &&
+    cd `pwd -P` &&
     echo "* Plugin directory has been renamed" &&
     echo "* Install complete"
 else echo "Take the plugin name as argument in cli"
