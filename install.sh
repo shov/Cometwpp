@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 if [ ! -z "$1" ]; then
     if [ "$1" == '--update' ]; then
         echo "Dont't know how to update yet :(";
