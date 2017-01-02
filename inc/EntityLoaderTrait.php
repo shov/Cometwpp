@@ -34,10 +34,6 @@ trait EntityLoaderTrait
         $path = (string)$path;
         $fullPath = $path;
 
-        if(false === $deepStep) {
-            $fullPath = $core->getPath()['inc'] . DIRECTORY_SEPARATOR . $path;
-        }
-
         if (!is_dir($fullPath)) throw new \InvalidArgumentException(sprintf("Path should be an directory, '%s' given. Path part is %s", $fullPath, $path));
 
         $entityDir = new \DirectoryIterator($fullPath);
