@@ -18,7 +18,7 @@ if [ ! -z "$1" ]; then
 
     rm -Rf ./.git/ &&
     rm -f ./.gitignore &&
-    echo -e "${GL}Git files has been removed"
+    echo -e "${NC}> Git files has been removed"
 
     cat ./config.example.php | sed "s/cometwpp_plugin_fw_prefix/$name-prefix/g" | sed "s/cometwpp_plugin_fw/$name/g" > ./config.php &&
     rm -f ./config.example.php &&
@@ -34,7 +34,8 @@ if [ ! -z "$1" ]; then
     cd .. &&
     mv -T ./Cometwpp ./"$name" &&
     cd `pwd -P` &&
-    echo -e "${GL}* Plugin directory has been renamed" &&
+    echo -e "${NC}> Plugin directory has been renamed" &&
     echo -e "${GL}* Install complete"
 else echo -e "${GL}Take the plugin name as argument in cli"
 fi
+echo -e "${NC}\n";

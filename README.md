@@ -1,3 +1,25 @@
-PHP **5.6+** required
+#Cometwpp
+is the Wordpress plugin mini framework
+### Required
+PHP **5.6+**
 <br>
-Wordpress 4+ required
+Wordpress 4+
+###Install
+You can use unix terminal
+```bash
+git clone https://github.com/shov/Cometwpp.git
+cd ./Cometwpp
+/bin/bash ./install.sh NewPluginName
+```
+
+Also u can do it manually. TODO:
+1. [Download](https://github.com/shov/Cometwpp/archive/master.zip) or clone
+2. Unpack
+3. Replace all entries of the several strings to your new plugin name:
+..* in config.example.php 'cometwpp_fw' and 'cometwpp_fw_prefix'
+..* in pl_plugin_name 'PluginName' (it's class name)
+..* in all .php files 'Cometwpp' (it's namespace and package name)
+4. Rename few files:
+..* config.example.php to config.php
+..* pl_plugin_name.php to your new plugin name
+..* this folder (Cometwpp) to your new plugin name
