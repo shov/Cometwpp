@@ -16,10 +16,10 @@ Also u can do it manually. TODO:
 1. [Download](https://github.com/shov/Cometwpp/archive/master.zip) or clone
 2. Unpack
 3. Replace all entries of the several strings to your new plugin name:
-..* in config.example.php 'cometwpp_fw' and 'cometwpp_fw_prefix'
-..* in pl_plugin_name 'PluginName' (it's class name)
-..* in all .php files 'Cometwpp' (it's namespace and package name)
+    * in config.example.php 'cometwpp_fw' and 'cometwpp_fw_prefix'
+    * in pl_plugin_name 'PluginName' (it's class name)
+    * in all .php files 'Cometwpp' (it's namespace and package name)
 4. Rename few files:
-..* config.example.php to config.php
-..* pl_plugin_name.php to your new plugin name
-..* this folder (Cometwpp) to your new plugin name
+    * config.example.php to config.php
+    * pl_plugin_name.php to your new plugin name
+    * this folder (Cometwpp) to your new plugin name
