@@ -6,7 +6,7 @@ if [ ! -z "$1" ]; then
     fi
 
     name=$1
-    rx='[a-zA-Z]';
+    rx="^([a-zA-Z]{3,})$"
     if ! [[ "$name" =~ $rx ]] ; then
         echo "Bad name, use letters in the range [A-Za-z]!"
         exit
@@ -24,12 +24,14 @@ if [ ! -z "$1" ]; then
     find ./ -type f -name "*.php" -print0 | xargs -0 sed -i "s/Cometwpp/$name/g"
     echo "* Namespace done"
 
-    sed "s/PluginName/$name/g" ./pl_plugin_name.php
-    mv ./pl_plugin_name.php ./"$name".php
+    sed "s/PluginName/$name/g" ./pl_plugin_name.php &&
+    mv ./pl_plugin_name.php ./"$name".php &&
     echo "* Plugin Name done"
 
-    mv -T ./ ../"$name"
-    echo "* Plugin directory has been renamed"
+    cd .. &&
+    mv -T ./Cometwpp ./"$name" &&
+    cd ./"$name" &&
+    echo "* Plugin directory has been renamed" &&
     echo "* Install complete"
 else echo "Take the plugin name as argument in cli"
 fi
