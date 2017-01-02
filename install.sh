@@ -1,21 +1,23 @@
 #!/usr/bin/env bash
+if [ ! -z "$1" ]; then
+    if [ "$1" == '--update' ]; then
+        echo "Dont't know how to update yet :(";
+        exit
+    fi
 
-if [ $1 == --update ]; then
-    echo "Dont't know how to update yet :(";
-elif [ ! -z "$1" ]; then
-    name = $1
-    rx = '[a-zA-Z]';
+    name=$1
+    rx='[a-zA-Z]';
     if ! [[ "$name" =~ $rx ]] ; then
         echo "Bad name, use letters in the range [A-Za-z]!"
         exit
     fi
 
-    rm -Rf ./.git/
-    rm -f ./.gitignore
+    rm -Rf ./.git/ &&
+    rm -f ./.gitignore &&
     echo "Git files has been removed"
 
-    sed "s/cometwpp_plugin_fw/$name/g" ./config.php
-    sed "s/cometwpp_plugin_fw_prefix/$name-prefix/g" ./config.php
+    sed "s/cometwpp_plugin_fw/$name/g" ./config.php &&
+    sed "s/cometwpp_plugin_fw_prefix/$name-prefix/g" ./config.php &&
     echo "* Config done"
 
     find ./ -type f -name "*.php" -print0 | xargs -0 sed -i "s/Cometwpp/$name/g"
