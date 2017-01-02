@@ -1,4 +1,4 @@
-#Cometwpp
+#Cometwpp 
 is the Wordpress plugin mini framework
 ### Required
 PHP **5.6+**
@@ -13,6 +13,7 @@ cd ./Cometwpp
 ```
 
 Also u can do it manually. TODO:
+<br>
 1. [Download](https://github.com/shov/Cometwpp/archive/master.zip) or clone
 2. Unpack
 3. Replace all entries of the several strings to your new plugin name:
@@ -23,3 +24,5 @@ Also u can do it manually. TODO:
     * config.example.php to config.php
     * pl_plugin_name.php to your new plugin name
     * this folder (Cometwpp) to your new plugin name
+
+:+1:
