@@ -2,10 +2,4 @@
 !/.gitignore
 
 config.php
-css/*
-js/*
-img/*
-inc/mods/*
-inc/features/*
 render/*
-tpl/*
