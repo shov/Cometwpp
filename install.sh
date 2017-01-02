@@ -16,8 +16,9 @@ if [ ! -z "$1" ]; then
     rm -f ./.gitignore &&
     echo "Git files has been removed"
 
-    sed "s/cometwpp_plugin_fw/$name/g" ./config.php &&
-    sed "s/cometwpp_plugin_fw_prefix/$name-prefix/g" ./config.php &&
+    sed "s/cometwpp_plugin_fw/$name/g" ./config.example.php &&
+    sed "s/cometwpp_plugin_fw_prefix/$name-prefix/g" ./config.example.php &&
+    mv ./config.example.php ./config.php &&
     echo "* Config done"
 
     find ./ -type f -name "*.php" -print0 | xargs -0 sed -i "s/Cometwpp/$name/g"
