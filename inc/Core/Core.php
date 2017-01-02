@@ -71,6 +71,7 @@ final class Core
         $aConfig = $this->readConfig($configPath);
 
         $this->prefix = $this->setPrefix($aConfig['prefix']);
+        $this->pathGenerate($aConfig['path']);
         $this->path = $aConfig['path'];
 
         $this->name = $aConfig['name'];
@@ -96,6 +97,18 @@ final class Core
         if (!preg_match('/^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$/', $prefix)) throw new \InvalidArgumentException(sprintf("Wrong prefix: %s", $prefix));
         $this->prefix = $prefix;
         return;
+    }
+
+    private function pathGenerate($aPath = [])
+    {
+        foreach ($aPath as $path) {
+            $isDir = is_dir($path);
+            $exists = file_exists($path);
+            if($exists && !$isDir) throw new \Exception(sprintf("Can't create required directory, %s, file exists", $path));
+            if(!$exists) {
+                if(!mkdir($path, 0755, true)) throw new \Exception(sprintf("Can't create required directory, %s, php error", $path));
+            }
+        }
     }
 
 
