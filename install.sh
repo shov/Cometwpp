@@ -1,7 +1,7 @@
 #!/bin/bash
 if [ ! -z "$1" ]; then
     if [ "$1" == '--update' ]; then
-        echo "Dont't know how to update yet :(";
+        echo "Don't know how to update yet :(";
         exit
     fi
 
@@ -16,15 +16,15 @@ if [ ! -z "$1" ]; then
     rm -f ./.gitignore &&
     echo "Git files has been removed"
 
-    sed "s/cometwpp_plugin_fw/$name/g" ./config.example.php &&
-    sed "s/cometwpp_plugin_fw_prefix/$name-prefix/g" ./config.example.php &&
+    cat ./config.example.php | sed --quiet "s/cometwpp_plugin_fw/$name/g" > ./config.example.php &&
+    cat ./config.example.php | sed --quiet "s/cometwpp_plugin_fw_prefix/$name-prefix/g" > ./config.example.php &&
     mv ./config.example.php ./config.php &&
     echo "* Config done"
 
-    find ./ -type f -name "*.php" -print0 | xargs -0 sed -i "s/Cometwpp/$name/g"
+    find ./ -type f -name "*.php" -print0 | xargs -0 sed -i --quiet "s/Cometwpp/$name/g"
     echo "* Namespace done"
 
-    sed "s/PluginName/$name/g" ./pl_plugin_name.php &&
+    cat ./pl_plugin_name.php | sed --quiet "s/PluginName/$name/g" > ./pl_plugin_name.php  &&
     mv ./pl_plugin_name.php ./"$name".php &&
     echo "* Plugin Name done"
 
