@@ -16,8 +16,8 @@ $basePath = __DIR__.DIRECTORY_SEPARATOR;
  *  @var array $aConfig - is an array who contains all one-place-control settings of the plugin
  */
 $aConfig = [
-    'name'  => 'Плагин',
-    'prefix' => 'cometwpp',
+    'name'  => 'cometwpp_plugin_fw',
+    'prefix' => 'cometwpp_plugin_fw_prefix',
     'path' => [
         'plugin' => $basePath,
         'inc'    => $basePath.'inc',
