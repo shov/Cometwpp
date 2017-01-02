@@ -105,7 +105,7 @@ final class Core
             $isDir = is_dir($path);
             $exists = file_exists($path);
             if($exists && !$isDir) throw new \Exception(sprintf("Can't create required directory, %s, file exists", $path));
-            if(!$exists) {
+            if(!$isDir) {
                 if(!mkdir($path, 0755, true)) throw new \Exception(sprintf("Can't create required directory, %s, php error", $path));
             }
         }

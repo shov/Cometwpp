@@ -20,7 +20,7 @@ if [ ! -z "$1" ]; then
     rm -f ./.gitignore &&
     echo -e "${NC}> Git files has been removed"
 
-    cat ./config.example.php | sed "s/cometwpp_plugin_fw_prefix/$name-prefix/g" | sed "s/cometwpp_plugin_fw/$name/g" > ./config.php &&
+    cat ./config.example.php | sed "s/cometwpp_plugin_fw_prefix/${name}_prefix/g" | sed "s/cometwpp_plugin_fw/$name/g" > ./config.php &&
     rm -f ./config.example.php &&
     echo -e "${GL}* Config done"
 
