@@ -111,6 +111,7 @@ class ResGraber
         $fullName = null;
         foreach ($this->aExt as $sExt) {
             $sTmp = $halfFulPath . '.' . $sExt;
+            assert(is_readable($sTmp), sprintf("For a while we trying got: Not readable res '%s'", $sTmp));
             if (is_readable($sTmp)) {
                 $fullName = $sTmp;
                 break;
@@ -144,7 +145,7 @@ class ResGraber
         assert(!empty($name));
 
         $res = $this->makeNamePath($name);
-        assert(is_readable($res), sprintf('For %s', $res));
+        assert(is_readable($res), sprintf('Bad path for name %s', $name));
 
         if(!is_readable($res)) return false;
         return $res;
