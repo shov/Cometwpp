@@ -61,6 +61,16 @@ final class PluginName implements PluginControlInterface
                 if (is_readable($fullPath)) require $fullPath;
             }, true, true);
 
+            /*
+             * TODO: *duct tape, no need in php7+
+             */
+            set_error_handler(function ($errno, $errstr, $errfile, $errline) {
+                if (E_RECOVERABLE_ERROR === $errno) {
+                    throw new RecoverableErrorException();
+                }
+                return false;
+            });
+
             self::$_inst = new self();
         }
     }
