@@ -41,10 +41,10 @@ class JsProvider extends ResGraber
         $regName = $this->getClearName($name);
         $version = false; // don't use it yet
 
-        $path = $this->getPath($name);
-        assert(false !== $path);
-        if (false !== $path) {
-            wp_register_script($regName, $path, $dependence, $version, $bInFooter);
+        $url = $this->getUrl($name);
+        assert(false !== $url);
+        if (false !== $url) {
+            wp_register_script($regName, $url, $dependence, $version, $bInFooter);
             wp_enqueue_script($regName);
         }
     }

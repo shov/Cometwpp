@@ -39,10 +39,10 @@ class CssProvider extends ResGraber
     public function registerStyle($name, $dependence = [])
     {
         $regName = $regName = $this->getClearName($name);
-        $path = $this->getPath($name);
-        assert(false !== $path);
-        if (false !== $path) {
-            wp_register_style($regName, $path, $dependence);
+        $url = $this->geturl($name);
+        assert(false !== $url);
+        if (false !== $url) {
+            wp_register_style($regName, $url, $dependence);
             wp_enqueue_style($regName);
         }
     }
