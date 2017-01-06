@@ -35,7 +35,7 @@ class SettingsManager
     {
         $registry = Core::getInstance()->getRegistry();
         $registry->addOption('settings', []);
-        $this->settings = $registry->getSettings();
+        $this->settings = $registry->settings;
 
         $settingsVal = $this->settings->get();
         assert(is_array($settingsVal));
