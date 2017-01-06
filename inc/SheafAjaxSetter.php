@@ -93,7 +93,7 @@ class SheafAjaxSetter
                 if (!is_callable($hook)) throw new \Exception(sprintf("Bad candidate hook, class name %s", $candidateClassName));
             }
 
-            if(!is_array($this->aSheafStore[$name])) $this->aSheafStore[$name] = [];
+            if (!(isset($this->aSheafStore[$name]) && is_array($this->aSheafStore[$name]))) $this->aSheafStore[$name] = [];
             $this->aSheafStore[$name] = array_merge($this->aSheafStore[$name], $sheaf);
         }
     }
