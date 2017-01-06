@@ -110,8 +110,15 @@ class AdminContextController extends AbstractContextController
     {
         $sheafAjaxSetter = new SheafAjaxSetter();
         foreach ($this->aEntities as $entity) {
-            if (!in_array('AjaxUserInterface', class_implements($entity))) continue; /* TODO: *duct tape */
-            $sheafAjaxSetter->addCandidate($entity);
+            /*
+             * We try to pass each entity to method as AjaxUserInterface\
+             * if it's not, we got an Error, then catch it and go ahead
+             */
+            try {
+                $sheafAjaxSetter->addCandidate($entity);
+            } catch (\Error $e) {
+                ; //just skip no rendarable
+            }
         }
         $sheafAjaxSetter->registerCandidates();
     }

@@ -1,7 +1,6 @@
 <?php
 namespace Cometwpp;
 
-use Cometwpp\Core\Core;
 
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly.
@@ -22,10 +21,14 @@ abstract class AbstractPagePartAdmin implements RenderableThingInterface, AjaxUs
 
     protected $adminContext;
 
-    public function __construct()
+    /**
+     * AbstractPagePartAdmin constructor.
+     * @param AdminContextController $adminContext
+     */
+    public function __construct(AdminContextController $adminContext)
     {
         $this->wouldUseTemplate();
-        $this->adminContext = ContextManager::getContextController('admin');
+        $this->adminContext = $adminContext;
         $this->adminContext->addToRootPage($this);
     }
 }
