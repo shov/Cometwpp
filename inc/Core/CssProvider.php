@@ -35,6 +35,7 @@ class CssProvider extends ResGraber
      * Try to register style with WP functions
      * @param $name
      * @param array $dependence
+     * @return string
      */
     public function registerStyle($name, $dependence = [])
     {
@@ -45,6 +46,7 @@ class CssProvider extends ResGraber
             wp_register_style($regName, $url, $dependence);
             wp_enqueue_style($regName);
         }
+        return $regName;
     }
 
     /**

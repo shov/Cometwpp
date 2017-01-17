@@ -35,6 +35,7 @@ class JsProvider extends ResGraber
      * Try to register script with WP functions
      * @param $name
      * @param array $dependence
+     * @return string
      */
     public function registerSript($name, $dependence = [], $bInFooter = true)
     {
@@ -47,6 +48,7 @@ class JsProvider extends ResGraber
             wp_register_script($regName, $url, $dependence, $version, $bInFooter);
             wp_enqueue_script($regName);
         }
+        return $regName;
     }
 
     public function addVarToScript($name, $varName, $varValue = [])
