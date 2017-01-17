@@ -119,7 +119,7 @@ class AdminContextController extends AbstractContextController
             } catch (RecoverableErrorException $e) {
                 /*
                  * TODO: *duct tape, in php7+ just catch \Error
-                 */; //just skip no rendarable
+                 */; //just skip no AjaxUserInterface
             }
         }
         $sheafAjaxSetter->registerCandidates();
