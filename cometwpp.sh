@@ -15,7 +15,7 @@
 
 #colors
 colorRD='\e[0;31m'
-colorYL= '\e[0;33m'
+colorYL='\e[0;33m'
 colorGL='\033[1;32m'
 colorNC='\033[0m'
 
@@ -45,7 +45,6 @@ testZErrMsg() {
 greenMessage() {
     if [[ -n $1 ]]; then
         echo -e "${colorGL}${1}${colorNC}"
-        exit 1
     fi
 }
 
@@ -57,14 +56,12 @@ yNQuestion() {
     else
         read -n 1 a
     fi
-    echo "\n"
     case "$a" in
-        y|Y) echo 1
+        y|Y) echo '1'
            ;;
-        ?) echo ''
+        \?|*) echo ''
            ;;
     esac
-    exit 1
 }
 
 # echo the app who not installed
@@ -137,10 +134,11 @@ HELP
 exit 0
 }
 
+#set -e
+
 ##
 # Arguments
 ##
-set -e
 
 bRename=
 bUpdate=
@@ -150,23 +148,30 @@ newName=
 arrHelpKey=( '--help' '--info' )
 [[ " ${arrHelpKey[@]} " =~ " ${1} " ]] && showHelp
 
-OPTIND=1
-while getopts ":hur:" opt; do
-    case "$opt" in
-    h|\?)  showHelp
-        ;;
-    r)  ;; #make no sence, bRename depend $newName val
-    u)  bUpdate=1
-        ;;
-    :)  newName="$OPTARG"
-        ;;
-    esac
-done
-shift $((OPTIND-1))
-[ "$1" = "--" ] && shift
-
-if [[ -n "$newName" ]]; then
+rx="^([a-zA-Z]{3,})$"
+if ( [[ $# == 1 ]] && [[ "$1" =~ $rx ]] ) ; then
     bRename=1
+    newName="$1"
+else
+    OPTIND=1
+    while getopts ":hur:" opt; do
+        case "$opt" in
+        h|\?)  showHelp
+            exit 1
+            ;;
+        r)  bRename=1
+            newName="$OPTARG"
+            ;;
+        u)  bUpdate=1
+            ;;
+        :)
+            echo "After -$OPTARG type NewPluginName!" >&2
+            exit 1
+            ;;
+        esac
+    done
+    shift $((OPTIND-1))
+    [ "$1" = "--" ] && shift
 fi
 
 ##
@@ -195,17 +200,16 @@ gitZip='https://github.com/shov/Cometwpp/archive/master.zip'
 
 renameNameSpace='Cometwpp'
 renamePluginName='PluginName'
-renameConfPrefixRx="\(\$aConfig.*\n[^\]]*'prefix'\s*=>\s*'\)\(.*\)\(',\)"
-renameConfNameRx="\(\$aConfig.*\n\s*'name'\s*=>\s*'\)\(.*\)\(',\)"
 
 currDir=$( getCurrentDir )
+parentDirPreInstal="$currDir"
 currPlDirName=${currDir##*/}
 
 
 if [ -w "${currDir}/${currPlDirName}.php" ]; then
-    haveRenamed=currPlDirName
-    renameNameSpace=currPlDirName
-    renamePluginName=currPlDirName
+    haveRenamed="$currPlDirName"
+    renameNameSpace="$currPlDirName"
+    renamePluginName="$currPlDirName"
 else
     if ! ( [[ "$renameNameSpace" == "$currPlDirName" ]] && [ -w "${renamePluginName}.php" ] ) ; then
         bInstall=1
@@ -217,26 +221,25 @@ fi
 ##
 installCometwpp() {
     if [[ "git" == "$methodToGet" ]]; then
-        git clone "$gitRepo" &&
+        git clone "$gitRepo" $( pwd ) &&
         echo "> Git clone is done"
-
-        cd ./Cometwpp
 
         rm -Rf ./.git/ &&
         rm -f ./.gitignore &&
-        echo -e "> Git files has been removed"
+        echo "> Git files has been removed"
 
-        mv ./config.example.php ./config.php
-        echo -e "> Config done"
+        cp ./config.example.php ./config.php
+        echo "> Config done"
     else
         wget "$gitZip"
         echo "> Download is done"
 
         unzip "./master.zip"
+        rm -f ./master.zip
         echo "> Unzip is done"
 
-        mv ./Cometwpp-master ./Cometwpp
-        cd ./Cometwpp
+        cp -r ./Cometwpp-master/* ./
+        rm -R ./Cometwpp-master
         rm -f ./.gitignore &&
         echo -e "> Git files has been removed"
     fi
@@ -247,9 +250,11 @@ if [[ -n "$bInstall" ]]; then
     echo 'Cometwwp not found!'
     echo 'Maybe this script are not in the folder of plugin?'
     if [[ -z $( yNQuestion "Make Install Cometwpp here?" ) ]]; then
+        echo ""
         echo 'Ok, nothing to do, bye'
         exit 0
     fi
+    echo ""
 
     if [ -d "./Cometwpp" ]; then
         echo "Can't make install!"
@@ -257,9 +262,16 @@ if [[ -n "$bInstall" ]]; then
         exit 0
     fi
 
+    if ( [[ -n "$bRename" ]] && [ -d "./$newName" ] ) ; then
+        echo "Can't make install!"
+        echo "In the current folder the $newName subfolder already exists!"
+        exit 0
+    fi
+
     greenMessage "Start installation!"
 
     tmpDir=$( mktemp -d )
+
     cd "$tmpDir"
     echo "> got Temp directory"
 
@@ -267,8 +279,9 @@ if [[ -n "$bInstall" ]]; then
 
     cd $currDir
     mkdir ./Cometwpp
-    mv "${tmpDir}/Cometwpp/*" ./Cometwpp
+    mv "${tmpDir}"/* ./Cometwpp
     cd ./Cometwpp
+
     currDir=$( getCurrentDir )
     currPlDirName=${currDir##*/}
 
@@ -289,12 +302,23 @@ if [[ -n "$bRename" ]]; then
     rx="^([a-zA-Z]{3,})$"
     if ! [[ "$newName" =~ $rx ]] ; then
         errorMessage "$newName" "Is bad name for plugin!"
-        exit 0
+    fi
+
+    if [ -d "../$newName" ] ; then
+        errorMessage "../$newName" "Folder already exists!"
     fi
 
     cd $currDir
 
-    cat ./config.php | sed "s!${renameConfPrefixRx}!\1${$newName,,}_prefix\3!g" | sed "s!${renameConfNameRx}!\1${$newName,,}\3!g" > ./config.php
+    if ! [ -w "config.php" ] ; then
+        if [ -w "config.example.php" ] ; then
+            cp ./config.example.php ./config.php
+        else
+            errorMessage "config.example.php" "No config and can't fing"
+        fi
+    fi
+    sed -i "s~\(\/\*\*\/.*name.*=>\s*'\)\(.*\)\(',\)~\1${newName,,}\3~g" ./config.php
+    sed -i "s~\(\/\*\*\/.*prefix.*=>\s*'\)\(.*\)\(',\)~\1${newName,,}_prefix\3~g" ./config.php
     echo "> Config was updated"
 
     find ./ -type f -name "*.php" -print0 | xargs -0 sed -i "s/${renameNameSpace}/$newName/g"
@@ -306,7 +330,7 @@ if [[ -n "$bRename" ]]; then
 
     cd .. &&
     mv -T "./${currPlDirName}" ./"$newName" &&
-    cd $( pwd -P )
+    cd ./"$newName"
     echo "> Plugin directory has been renamed"
 
     currDir=$( getCurrentDir )
@@ -325,15 +349,18 @@ if [[ -n "$bUpdate" ]]; then
         greenMessage "Start update"
         echo "Update will replace old files in /inc folder of your plugin!"
         if [[ -z $( yNQuestion "Do you wanna continue?" ) ]]; then
+            echo ""
             echo 'Update skipped!'
         else
+            echo ""
+
             tmpDir=$( mktemp -d )
             cd "$tmpDir"
             echo "> got Temp directory"
 
             installCometwpp
 
-            cd "$tmpDir/Cometwpp/inc"
+            cd "$tmpDir/inc"
             find ./ -type f -name "*.php" -print0 | xargs -0 sed -i "s/Cometwpp/${currPlDirName}/g"
             echo "> Namespace was changed"
             /bin/cp -rf ./* "$currDir/inc"
@@ -351,4 +378,16 @@ if [[ -n "$bUpdate" ]]; then
 fi
 
 greenMessage "All operations successfully completed! Bye!"
+
+##
+#   Self delete
+##
+if [[ -n "$bInstall" ]] ; then
+    if [[ -z $( yNQuestion "New plugin has been installed in ./${currPlDirName} Save this script?" ) ]]; then
+        cd "$parentDirPreInstal"
+        rm -- "$0"
+    fi
+    echo ""
+fi
+
 exit 0
