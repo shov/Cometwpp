@@ -68,6 +68,7 @@ class SheafAjaxSetter
                 $reflection = null;
             }
 
+            $ajaxResult['hasError'] = (bool)$ajaxResult['hasError'];
             echo json_encode($ajaxResult);
         });
     }
