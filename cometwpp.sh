@@ -179,7 +179,9 @@ fi
 ##
 
 methodToGet=$( requireOneOf 'git' 'unzip' )
-testZErrMsg "git or unzip" "You should install at least one of applications"
+if [[ -z "$methodToGet" ]]; then
+    errorMessage "git or unzip" "You should install at least one of applications"
+fi
 
 commonRequire="sed mktemp"
 requireResult=
