@@ -41,11 +41,18 @@ abstract class AbstractContextController implements \IteratorAggregate, InquireI
         $this->entitiesAutoload($autoLoadPath);
     }
 
+    /**
+     * @return \ArrayIterator
+     */
     public function getIterator()
     {
         return new \ArrayIterator($this->aEntities);
     }
 
+
+    /**
+     *  Call all callbacks (inquiring) with priority
+     */
     protected function inquiring()
     {
         ksort($this->aInquiringCall, SORT_NUMERIC );
@@ -56,6 +63,12 @@ abstract class AbstractContextController implements \IteratorAggregate, InquireI
         }
     }
 
+    /**
+     * Add callback to queue with priority
+     * @param callable $call
+     * @param $priority
+     * @return mixed
+     */
     public function addInquire(callable $call, $priority = self::DEF_INQUIRE_PRIORITY) {
         $priority = (int)$priority;
         $this->aInquiringCall[$priority][] = $call;

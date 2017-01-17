@@ -12,5 +12,11 @@ if (!defined('ABSPATH')) {
  */
 interface InquireInterface
 {
+    /**
+     * Add callback to queue with priority
+     * @param callable $call
+     * @param $priority
+     * @return mixed
+     */
     public function addInquire(callable $call, $priority);
 }
