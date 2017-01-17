@@ -39,6 +39,7 @@ class AdminContextController extends AbstractContextController
         $this->wouldUseTemplate();
         $this->setupAdminPanel();
         $this->registerAjaxSheaf();
+        $this->inquiring();
     }
 
     /**

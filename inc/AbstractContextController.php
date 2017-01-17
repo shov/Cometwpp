@@ -22,12 +22,14 @@ if (!defined('ABSPATH')) {
  * @package Cometwpp
  * @category Class
  */
-abstract class AbstractContextController
+abstract class AbstractContextController implements \IteratorAggregate, InquireInterface
 {
     use EntityProviderTrait;
     use EntityLoaderTrait;
 
-    protected $aEntities;
+    protected $aEntities = [];
+    protected $aInquiringCall = [];
+    const DEF_INQUIRE_PRIORITY = 10;
 
     /**
      * AbstractContextEntityController constructor.
@@ -36,7 +38,26 @@ abstract class AbstractContextController
     public function __construct($autoLoadPath)
     {
         Core::getInstance();
-        $this->aEntities = [];
         $this->entitiesAutoload($autoLoadPath);
+    }
+
+    public function getIterator()
+    {
+        return new \ArrayIterator($this->aEntities);
+    }
+
+    protected function inquiring()
+    {
+        ksort($this->aInquiringCall, SORT_NUMERIC );
+        foreach ($this->aInquiringCall as $callStack) {
+            foreach ($callStack as $call) {
+                call_user_func($call);
+            }
+        }
+    }
+
+    public function addInquire(callable $call, $priority = self::DEF_INQUIRE_PRIORITY) {
+        $priority = (int)$priority;
+        $this->aInquiringCall[$priority][] = $call;
     }
 }
