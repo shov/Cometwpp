@@ -65,7 +65,7 @@ class SettingsManager
      */
     public function setSetting($name, $val)
     {
-        $this->$this->checkNameIsCorrect($name);
+        $this->checkNameIsCorrect($name);
         return $this->operationSetGet($name, $val, self::SET_ANY_WAY);
     }
 
