@@ -57,7 +57,7 @@ yNQuestion() {
     else
         read -n 1 a
     fi
-    echo ''
+    echo "\n"
     case "$a" in
         y|Y) echo 1
            ;;
