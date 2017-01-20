@@ -42,7 +42,7 @@ abstract class AbstractRegistryManager
     }
 
     /**
-     * Set root property who will be the base of the manager
+     * Set root property which will be the base of the manager
      * Ορίζει θεμελιώδης ιδιότητα, η οποία βρίσκεται στη βάση του διαχειριστή
      * @param $propName
      */

@@ -11,8 +11,9 @@ if (!defined('ABSPATH')) {
  * @package Cometwpp
  * @category Class
  */
-abstract class AbstractRegistryBasedModel
+abstract class AbstractRegistryBasedModel extends AbstractRegistryManager
 {
+    protected $context;
 
     /**
      * AbstractRegistryBasedModel constructor.
@@ -20,5 +21,6 @@ abstract class AbstractRegistryBasedModel
      */
     public function __construct(ContextController $context)
     {
+        $this->context = $context;
     }
 }
