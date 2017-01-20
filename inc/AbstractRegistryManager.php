@@ -60,7 +60,7 @@ abstract class AbstractRegistryManager
      * @param array $initVal
      * @return mixed
      */
-    protected function get($name, $initVal = [])
+    protected function getTheProp($name, $initVal = [])
     {
         $this->checkNameIsCorrect($name);
         return $this->operationSetGet($name, $initVal, self::TRY_GET);
@@ -72,7 +72,7 @@ abstract class AbstractRegistryManager
      * @param $val
      * @return mixed
      */
-    protected function set($name, $val)
+    protected function setTheProp($name, $val)
     {
         $this->checkNameIsCorrect($name);
         return $this->operationSetGet($name, $val, self::SET_ANY_WAY);

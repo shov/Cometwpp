@@ -38,7 +38,7 @@ class SettingsManager extends AbstractRegistryManager
      */
     public function getSetting($name, $initVal = [])
     {
-        return $this->get($name, $initVal);
+        return $this->getTheProp($name, $initVal);
     }
 
     /**
@@ -49,6 +49,6 @@ class SettingsManager extends AbstractRegistryManager
      */
     public function setSetting($name, $val)
     {
-        return $this->set($name, $val);
+        return $this->setTheProp($name, $val);
     }
 }
