@@ -11,7 +11,6 @@
 
 namespace Cometwpp;
 
-
 use Cometwpp\Core\Core;
 use Cometwpp\Core\Option;
 
