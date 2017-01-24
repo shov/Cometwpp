@@ -37,7 +37,7 @@ class JsProvider extends ResGraber
      * @param array $dependence
      * @return string
      */
-    public function registerSript($name, $dependence = [], $bInFooter = true)
+    public function registerScript($name, $dependence = [], $bInFooter = true)
     {
         $regName = $this->getClearName($name);
         $version = false; // don't use it yet
