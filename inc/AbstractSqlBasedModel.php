@@ -19,12 +19,7 @@ abstract class AbstractSqlBasedModel
 
     public function __construct()
     {
-        global $wpdb;
-        if (!isset($wpdb)) throw new \Exception(sprintf('Can\'t find $wpdb in the global scope.'));
-        if (!is_object($wpdb)) throw new \Exception(sprintf('$wpdb is not an object.'));
-        if (!($wpdb instanceof \wpdb)) throw new \Exception(sprintf('$wpdb is not instance of wpdb class.'));
-
-        $this->db = $wpdb;
+        $this->db = Core::getInstance()->getDbo();
     }
 
     /**
@@ -48,8 +43,8 @@ abstract class AbstractSqlBasedModel
      */
     protected function createTableIfNotExists($table, $sqlFieldsString)
     {
-        $table = $this->addPrefix($table);
         if ($this->tableExists($table)) return null;
+        $table = $this->addPrefix($table);
         $query = 'CREATE TABLE ' . $table . ' (
                     id       int(11)  NOT NULL AUTO_INCREMENT,
                     ' . $sqlFieldsString . '

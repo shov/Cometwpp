@@ -57,6 +57,8 @@ final class Core
     private $session;
     private $registry;
 
+    private $dbo;
+
     private $templater;
     private $jsProvider;
     private $cssProvider;
@@ -80,6 +82,8 @@ final class Core
         $this->session = Session::getInstance($aConfig['prefix']);
 
         $this->registry = Registry::getInstance($aConfig['prefix'], $aConfig['wpoptions']);
+
+        $this->dbo = Dbo::getDb();
 
         $this->templater = new Templater($aConfig['path']['tpl']);
         $this->jsProvider = new JsProvider($aConfig['path']['js']);
@@ -234,5 +238,12 @@ final class Core
     public function getPrefix()
     {
         return $this->prefix;
+    }
+
+    /**
+     * @return object
+     */
+    public function getDbo() {
+        return $this->dbo;
     }
 }
