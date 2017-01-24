@@ -33,10 +33,10 @@ trait EntityLoaderTrait
         if (!isset($this->aEntities)) throw new \Exception(sprintf('Trait extender should has $aEntities filed'));
 
         $path = (string)$path;
-        $fullPath = $path;
 
-        if (false === $deepStep) {
-            $fullPath = $core->getPath($path);
+        $fullPath = $core->getPath($path);
+        if (false !== $deepStep) {
+            $fullPath .= DIRECTORY_SEPARATOR . $deepStep;
         }
 
         if (!is_dir($fullPath)) throw new \InvalidArgumentException(sprintf("Path should be an directory, '%s' given. Path part is %s", $fullPath, $path));
@@ -49,8 +49,7 @@ trait EntityLoaderTrait
 
             if ((false === $deepStep) && $fileInfo->isDir()) { //go one step to the deep the entity, who has own folder
                 $lookingFor = $fileInfo->getBasename();
-                $pathToStep = $fullPath . DIRECTORY_SEPARATOR . $lookingFor;
-                $this->entitiesAutoload($pathToStep, $lookingFor);
+                $this->entitiesAutoload($path, $lookingFor);
             }
 
             if (!$fileInfo->isFile()) continue;
@@ -81,6 +80,10 @@ trait EntityLoaderTrait
 
         $nameSpace = '\\' . explode("\\", __NAMESPACE__)[0];
         $nameSpace .= '\\' . str_replace(DIRECTORY_SEPARATOR, "\\", $path) . '\\';
+
+        if(false !== $deepStep) {
+            $nameSpace .= $deepStep . "\\";
+        }
 
         foreach ($aEntityClasses as $className) {
             $reflect = new \ReflectionClass($nameSpace . $className);
