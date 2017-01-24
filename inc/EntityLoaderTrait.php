@@ -48,8 +48,8 @@ trait EntityLoaderTrait
             if ($fileInfo->isDot() || !$fileInfo->isReadable()) continue;
 
             if ((false === $deepStep) && $fileInfo->isDir()) { //go one step to the deep the entity, who has own folder
-                $pathToStep = $fileInfo->getPathname();
                 $lookingFor = $fileInfo->getBasename();
+                $pathToStep = $fullPath . DIRECTORY_SEPARATOR . $lookingFor;
                 $this->entitiesAutoload($pathToStep, $lookingFor);
             }
 
