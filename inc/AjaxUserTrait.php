@@ -78,14 +78,16 @@ trait AjaxUserTrait
     /**
      * @param array $data
      * @param array|string $args
-     * @param bool $noEmpty
      * @param callable|null $callback
-     * @return null ;
+     * @param callable|null $fail
+     * @return mixed|bool If ok, return true
      */
-    protected function ajaxRequiredArgs($data, $args = [], $noEmpty = true, callable $callback = null)
+    protected function ajaxRequiredArgs($data, $args = [], callable $callback = null, callable $fail = null)
     {
-        if (!is_array($data)) $this->ajaxFail();
-        if (empty($data)) $this->ajaxFail();
+        if(is_null($fail)) $fail = [$this, 'ajaxFail'];
+
+        if (!is_array($data)) return $fail();
+        if (empty($data)) return $fail();
 
         if (is_string($args) && !empty($args)) $args = [$args,]; //just one arg is req
 
@@ -96,31 +98,30 @@ trait AjaxUserTrait
         foreach ($args as $argNameForArrays => $arg) {
             if (is_array($arg)) {
                 $deepData = $data[$argNameForArrays];
-                if (!isset($deepData)) $this->ajaxFail();
+                if (!isset($deepData)) return $fail();
                 if (is_array($deepData)) {
                     if (empty($deepData)) {
-                        if ($noEmpty) $this->ajaxFail();
                         continue;
                     }
                 } else {
                     $deepData = [$deepData,];
                 }
-                $this->ajaxRequiredArgs($deepData, $arg, $noEmpty, $callback);
+                if(true !== $this->ajaxRequiredArgs($deepData, $arg, $callback, $fail)) return $fail();
                 continue;
             }
 
-            if (!isset($data[$arg])) $this->ajaxFail();
+            if (!isset($data[$arg])) return $fail();
 
-            if ($noEmpty) {
-                if (!is_numeric($data[$arg]) && !is_bool($data[$arg])) {
-                    if (empty($data[$arg])) $this->ajaxFail();
+            $defaultCallbackNoEmpty = function ($val) use ($fail) {
+                if (!is_numeric($val) && !is_bool($val)) {
+                    if (empty($val)) return $fail();
                 }
-            }
+            };
 
-            if (isset($callback)) {
-                if (false === call_user_func($callback, $data[$arg])) $this->ajaxFail();
-            }
+            if (is_null($callback)) $callback = $defaultCallbackNoEmpty;
+            if (false === $callback($data[$arg])) return $fail();
         }
+        return true;
     }
 
     /**
