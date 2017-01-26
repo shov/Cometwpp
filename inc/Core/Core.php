@@ -56,6 +56,8 @@ final class Core
     private $path;
     private $name;
 
+    private $cronMaster;
+
     private $ajaxHandler;
     private $session;
     private $registry;
@@ -80,6 +82,8 @@ final class Core
         $this->path = $aConfig['path'];
 
         $this->name = $aConfig['name'];
+
+        $this->cronMaster = new CronMaster($aConfig['prefix']);
 
         $this->ajaxHandler = new AjaxHandler($aConfig['prefix']);
         $this->session = Session::getInstance($aConfig['prefix']);
@@ -152,6 +156,14 @@ final class Core
             }
         }
         return $this->path;
+    }
+
+    /**
+     * @return CronMaster
+     */
+    public function getCronMaster()
+    {
+        return $this->cronMaster;
     }
 
     /**
