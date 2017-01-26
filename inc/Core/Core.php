@@ -138,23 +138,6 @@ final class Core
     }
 
     /**
-     *  Do something if plugin has been activated in this runing
-     */
-    public function pluginActivation()
-    {
-        //$this->registry-> skip cron status
-        return;
-    }
-
-    /**
-     *  Do something if plugin has been deactivated in this runing
-     */
-    public function pluginDeactivation()
-    {
-        flush_rewrite_rules(false);
-    }
-
-    /**
      * @param null|string $spec
      * @return mixed
      */

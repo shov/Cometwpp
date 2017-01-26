@@ -115,13 +115,11 @@ final class PluginName implements PluginControlInterface
         }
 
         register_activation_hook(__FILE__, function () use ($self) {
-            $core = Core::getInstance();
-            $core->pluginActivation();
+
         });
 
         register_deactivation_hook(__FILE__, function () use ($self) {
-            $core = Core::getInstance();
-            $core->pluginDeactivation();
+            flush_rewrite_rules(false);
         });
 
         /*register_uninstall_hook(__FILE__, function(){
