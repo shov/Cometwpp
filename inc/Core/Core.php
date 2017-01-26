@@ -25,6 +25,7 @@ if (!defined('ABSPATH')) {
  */
 final class Core
 {
+
     use SingletonTrait;
 
     /**
@@ -48,6 +49,8 @@ final class Core
         self::init();
         return self::$_inst;
     }
+
+    const NAME_CHECK_REGEXP = '/^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$/';
 
     private $prefix;
     private $path;
@@ -98,7 +101,7 @@ final class Core
     private function setPrefix($prefix)
     {
         if (!is_string($prefix)) return;
-        if (!preg_match('/^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$/', $prefix)) throw new \InvalidArgumentException(sprintf("Wrong prefix: %s", $prefix));
+        if (!preg_match(self::NAME_CHECK_REGEXP, $prefix)) throw new \InvalidArgumentException(sprintf("Wrong prefix: %s", $prefix));
         $this->prefix = $prefix;
         return;
     }
