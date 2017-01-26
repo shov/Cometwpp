@@ -16,7 +16,9 @@ use Cometwpp\Core\Core;
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly.
 }
-
+/**
+ * @var string $part
+ */
 ?>
     <h1><?= Core::getInstance()->getName() ?></h1>
     <?php
