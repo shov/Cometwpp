@@ -11,6 +11,8 @@
 
 namespace Cometwpp;
 
+use Cometwpp\Core\Core;
+
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly.
 }
@@ -30,5 +32,8 @@ class CronWalker extends AbstractContextController
     public function __construct($autoLoadPath)
     {
        parent::__construct($autoLoadPath);
+       $cronMaster = Core::getInstance()->getCronMaster();
+       $cronMaster->registerWalks(...$this->aEntities);
+       $cronMaster->upCron();
     }
 }

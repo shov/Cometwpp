@@ -22,8 +22,8 @@ if (!defined('ABSPATH')) {
  */
 abstract class AbstractCronWalk
 {
-    /*
-     * @return array ['name' => string, 'action' => callable]
-     * */
+    /**
+     * @return array ['name' => string, 'interval', 'action' => callable,]
+     */
     abstract public function getWalkAction();
 }
