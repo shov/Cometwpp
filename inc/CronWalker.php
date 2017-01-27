@@ -31,9 +31,9 @@ class CronWalker extends AbstractContextController
      */
     public function __construct($autoLoadPath)
     {
-       parent::__construct($autoLoadPath);
-       $cronMaster = Core::getInstance()->getCronMaster();
-       $cronMaster->registerWalks(...$this->aEntities);
-       $cronMaster->upCron();
+        parent::__construct($autoLoadPath);
+        $cronMaster = Core::getInstance()->getCronMaster();
+        $cronMaster->registerWalks(...array_values($this->aEntities));
+        $cronMaster->upCron();
     }
 }

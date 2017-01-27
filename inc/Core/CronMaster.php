@@ -86,11 +86,12 @@ class CronMaster
             assert(is_array($actions));
             if (!is_array($actions)) continue;
 
-            $isOneAction = (3 === count($actions)) && isset($actions['name']) && isset($actions['interval']) && isset($actions['action']);
+            $isOneAction = (3 === count($actions)) && array_key_exists('name', $actions)
+                && array_key_exists('interval', $actions) && array_key_exists('action', $actions);
             if ($isOneAction) $actions = [$actions,];
 
             foreach ($actions as $action) {
-                $this->addActionToWalks(...$action);
+                $this->addActionToWalks($action['name'], $action['interval'], $action['action']);
             }
         }
     }
@@ -108,7 +109,9 @@ class CronMaster
 
         $pxName = $this->prefix . $name;
         $pxIntervalName = $this->prefix . $intervalName;
-        if(false === wp_get_schedule($pxIntervalName)) throw new \Exception(sprintf("Unknown cron interval name %s (passed %s), add it first!", $pxIntervalName, $intervalName));
+
+        $schedules = wp_get_schedules();
+        if (!array_key_exists($pxIntervalName, $schedules)) throw new \Exception(sprintf("Unknown cron interval name %s (passed %s), add it first!", $pxIntervalName, $intervalName));
 
         add_action($pxName, $action);
         $this->walksActSignatures[] = [$pxName, $pxIntervalName];
@@ -122,3 +125,4 @@ class CronMaster
         return $name;
     }
 }
+

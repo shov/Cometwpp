@@ -104,7 +104,7 @@ final class PluginName implements PluginControlInterface
     }
 
     /**
-     *
+     * Plugin setup in WP hooks
      */
     private function makePluginSetup()
     {
