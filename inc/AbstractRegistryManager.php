@@ -29,6 +29,9 @@ abstract class AbstractRegistryManager
     const SET_ANY_WAY = true;
     const NAME_SEPARATOR = ':';
 
+    /**
+     * @var Option $property
+     */
     private $property;
 
     private function setRootOption(Option $property) {
