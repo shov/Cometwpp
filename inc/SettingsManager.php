@@ -51,4 +51,24 @@ class SettingsManager extends AbstractRegistryManager
     {
         return $this->setTheProp($name, $val);
     }
+
+    /**
+     * Set setting by multi key (like "currency:usd") in cache
+     * @param $name
+     * @param $val
+     * @return mixed
+     */
+    public function setSettingCache($name, $val)
+    {
+        return $this->cacheTheProp($name, $val);
+    }
+
+    /**
+     * Burn the cached setting
+     * @return mixed
+     */
+    public function burnCache()
+    {
+        return $this->setTheProp();
+    }
 }

@@ -27,19 +27,26 @@ class Option
 {
     use PrefixUserTrait;
 
+    /**
+     * @var string $optionName
+     */
     protected $optionName;
+
+    /**
+     * @var mixed $cache
+     */
+    protected $valCache;
 
     /**
      * @param string $prefix
      * @param string $name
      */
-    public function __construct($prefix, $name)
+    public function __construct(string $prefix, string $name)
     {
-        if (is_string($prefix) && !empty($prefix)) $this->setPrefix($prefix);
-        $defaultOptionName = 'options';
+        if (0 !== strlen($prefix)) $this->setPrefix($prefix);
 
-        if (empty($name)) {
-            $this->optionName = $this->prefix . $defaultOptionName;
+        if (0 === strlen($name)) {
+            throw new \InvalidArgumentException(sprintf("Invalid option name! %s given", $name));
         } else {
             $this->optionName = $this->prefix . $name;
         }
@@ -64,5 +71,31 @@ class Option
     public function update($val = [])
     {
         return update_option($this->optionName, $val);
+    }
+
+    /**
+     * Cache option value, for update need @see Option::burn()
+     * @param mixed $val
+     */
+    public function cache($val = [])
+    {
+        $this->valCache = $val;
+    }
+
+    /**
+     * If have the cache then update option with it
+     * @see Option::cache()
+     * @return mixed|null
+     */
+    public function burn()
+    {
+        $haveCache = !is_null($this->valCache);
+        assert($haveCache);
+        if($haveCache) {
+            $result = $this->update($this->valCache);
+            $this->valCache = null;
+            return $result;
+        }
+        return null;
     }
 }

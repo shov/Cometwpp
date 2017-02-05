@@ -1,7 +1,7 @@
 #Cometwpp 
 is the Wordpress plugin mini framework
 ###Requirements
-PHP **5.6+**
+PHP **7+**
 <br>
 Wordpress 4+
 ###Install

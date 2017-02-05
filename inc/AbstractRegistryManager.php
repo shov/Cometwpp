@@ -25,8 +25,10 @@ if (!defined('ABSPATH')) {
  */
 abstract class AbstractRegistryManager
 {
-    const TRY_GET = false;
-    const SET_ANY_WAY = true;
+    const TRY_GET = 0;
+    const SET_AND_BURN = 1;
+    const SET_AND_CACHE = 2;
+
     const NAME_SEPARATOR = ':';
 
     /**
@@ -34,7 +36,8 @@ abstract class AbstractRegistryManager
      */
     private $property;
 
-    private function setRootOption(Option $property) {
+    private function setRootOption(Option $property)
+    {
         $this->property = $property;
         $val = $this->property->get();
         assert(is_array($val));
@@ -48,7 +51,8 @@ abstract class AbstractRegistryManager
      * Ορίζει θεμελιώδης ιδιότητα, η οποία βρίσκεται στη βάση του διαχειριστή
      * @param $propName
      */
-    protected function setRootProperty($propName) {
+    protected function setRootProperty($propName)
+    {
         $this->checkNameIsCorrect($propName);
         $registry = Core::getInstance()->getRegistry();
         $registry->addOption($propName, []);
@@ -69,29 +73,43 @@ abstract class AbstractRegistryManager
     }
 
     /**
-     * Set sub property by multi key (like "currency:usd")
+     * Set sub property by multi key (like "currency:usd") or burn, if call without arguments
+     * @param string|null $name
+     * @param mixed|null $val
+     * @return mixed
+     */
+    protected function setTheProp(string $name = null, $val = null)
+    {
+        $burnCache = (is_null($name) && is_null($val));
+        if($burnCache) {
+            return $this->property->burn();
+        } else {
+            $this->checkNameIsCorrect($name);
+            return $this->operationSetGet($name, $val, self::SET_AND_BURN);
+        }
+    }
+
+    /**
+     * Set sub property by multi key (like "currency:usd"), but just in cache
      * @param $name
      * @param $val
      * @return mixed
      */
-    protected function setTheProp($name, $val)
+    protected function cacheTheProp($name, $val)
     {
         $this->checkNameIsCorrect($name);
-        return $this->operationSetGet($name, $val, self::SET_ANY_WAY);
+        return $this->operationSetGet($name, $val, self::SET_AND_CACHE);
     }
 
     /**
-     * Pick the name, init array parts of the key, read / write
-     * @param $name
+     * Pick the name, init array parts of the key, read / write / cache
+     * @param string $name
      * @param null $newVal
      * @param $record
      * @return mixed
      */
-    private function operationSetGet($name, $newVal = null, $record)
+    private function operationSetGet(string $name, $newVal = null, $record)
     {
-        if (!is_bool($record)) throw new \InvalidArgumentException(sprintf("record flag should be bool"));
-        if (!is_string($name) || empty($name)) throw new \InvalidArgumentException(sprintf("name should be not an empty string"));
-
         $optVal = $this->property->get();
         $branch = &$optVal;
 
@@ -105,10 +123,18 @@ abstract class AbstractRegistryManager
             $part = array_shift($aPath);
 
             if ($last === $count) {
-                $shouldWrite = (!isset($branch[$part]) || (true === $record));
-                if ($shouldWrite) {
+                if (!isset($branch[$part])) {
                     $branch[$part] = $newVal;
-                    $this->property->update($optVal);
+
+                    switch (true) {
+                        case (self::SET_AND_BURN === $record):
+                            $this->property->update($optVal);
+                            break;
+
+                        case (self::SET_AND_CACHE === $record):
+                            $this->property->cache($optVal);
+                            break;
+                    }
                 } else {
                     $resultVal = $branch[$part];
                 }
@@ -132,7 +158,8 @@ abstract class AbstractRegistryManager
      */
     protected function checkNameIsCorrect($name)
     {
-        if (!preg_match('/^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_'.self::NAME_SEPARATOR.'\x7f-\xff]*$/', $name)) {
+        if (0 === mb_strlen($name)) throw new \InvalidArgumentException(sprintf("Cant use this name, its no correct, %s passed", $name));
+        if (!preg_match('/^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_' . self::NAME_SEPARATOR . '\x7f-\xff]*$/', $name)) {
             throw new \InvalidArgumentException(sprintf("Cant use this name, its no correct, %s passed", $name));
         }
     }
