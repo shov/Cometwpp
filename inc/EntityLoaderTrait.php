@@ -24,7 +24,6 @@ trait EntityLoaderTrait
      * @param bool|string $deepStep for entities with own folder (name entity class must be the same name of those folder)
      *                    DO NOT use this argument manually
      * @throws \Exception
-     * TODO: deepStep need to test
      */
     protected function entitiesAutoload($path = '', $deepStep = false)
     {
