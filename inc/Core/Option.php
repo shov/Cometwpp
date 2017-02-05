@@ -67,6 +67,7 @@ class Option
     /**
      * Update option value
      * @param mixed $val , if not passed, would used an empty array
+     * @return mixed
      */
     public function update($val = [])
     {
