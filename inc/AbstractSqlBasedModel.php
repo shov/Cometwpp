@@ -15,6 +15,9 @@ if (!defined('ABSPATH')) {
  */
 abstract class AbstractSqlBasedModel
 {
+    /**
+     * @var \wpdb $db
+     */
     protected $db;
 
     public function __construct()
