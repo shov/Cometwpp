@@ -24,6 +24,9 @@ class SettingsManager extends AbstractRegistryManager
 {
     use SingletonTrait;
 
+    const CACHE = 0;
+    const BURN = 1;
+
     private function __construct()
     {
         $this->setRootProperty('settings');
@@ -45,11 +48,16 @@ class SettingsManager extends AbstractRegistryManager
      * Set setting by multi key (like "currency:usd")
      * @param $name
      * @param $val
+     * @param int $mod
      * @return mixed
      */
-    public function setSetting($name, $val)
+    public function setSetting($name, $val, int $mod = self::CACHE)
     {
-        return $this->setTheProp($name, $val);
+        $result = $this->setTheProp($name, $val);
+        if(self::BURN === $mod) {
+            $this->burnCache();
+        }
+        return $result;
     }
 
     /**
