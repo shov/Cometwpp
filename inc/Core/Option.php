@@ -27,6 +27,8 @@ class Option
 {
     use PrefixUserTrait;
 
+    const FORCE = true;
+    const CACHE = false;
     /**
      * @var string $optionName
      */
@@ -35,7 +37,7 @@ class Option
     /**
      * @var mixed $cache
      */
-    protected $valCache;
+    protected $cachedVal;
 
     /**
      * @param string $prefix
@@ -61,42 +63,31 @@ class Option
      */
     public function get($orVal = null)
     {
+        if(!is_null($this->cachedVal)) {
+            return $this->cachedVal;
+        }
         return get_option($this->optionName, $orVal);
     }
 
     /**
      * Update option value
      * @param mixed $val , if not passed, would used an empty array
+     * @param bool $mod FORCE or CACHE, if FORCE, option will be born, cache will be updated any way
      * @return mixed
      */
-    public function update($val = [])
+    public function update($val = [], bool $mod = self::CACHE)
     {
-        return update_option($this->optionName, $val);
-    }
-
-    /**
-     * Cache option value, for update need @see Option::burn()
-     * @param mixed $val
-     */
-    public function cache($val = [])
-    {
-        $this->valCache = $val;
-    }
-
-    /**
-     * If have the cache then update option with it
-     * @see Option::cache()
-     * @return mixed|null
-     */
-    public function burn()
-    {
-        $haveCache = !is_null($this->valCache);
-        assert($haveCache);
-        if($haveCache) {
-            $result = $this->update($this->valCache);
-            $this->valCache = null;
-            return $result;
+        $this->cachedVal = $val;
+        if(self::FORCE === $mod) {
+            return update_option($this->optionName, $val);
         }
-        return null;
+        return $this->cachedVal;
+    }
+
+    public function __destruct()
+    {
+        if(!is_null($this->cachedVal)) {
+            update_option($this->optionName, $this->cachedVal);
+        }
     }
 }

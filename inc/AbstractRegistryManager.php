@@ -25,9 +25,9 @@ if (!defined('ABSPATH')) {
  */
 abstract class AbstractRegistryManager
 {
-    const TRY_GET = 0;
-    const SET_AND_BURN = 1;
-    const SET_AND_CACHE = 2;
+    const GET = 0;
+    const BURN = 1;
+    const CACHE = 2;
 
     const NAME_SEPARATOR = ':';
 
@@ -69,46 +69,33 @@ abstract class AbstractRegistryManager
     protected function getTheProp($name, $initVal = [])
     {
         $this->checkNameIsCorrect($name);
-        return $this->operationSetGet($name, $initVal, self::TRY_GET);
+        return $this->operationSetGet($name, $initVal, self::GET);
     }
 
     /**
-     * Set sub property by multi key (like "currency:usd") or burn, if call without arguments
+     * Set sub property by multi key (like "currency:usd")
      * @param string|null $name
      * @param mixed|null $val
+     * @param int $mod fine-tuning the cache with CACHE or BURN value
      * @return mixed
      */
-    protected function setTheProp(string $name = null, $val = null)
-    {
-        $burnCache = (is_null($name) && is_null($val));
-        if($burnCache) {
-            return $this->property->burn();
-        } else {
-            $this->checkNameIsCorrect($name);
-            return $this->operationSetGet($name, $val, self::SET_AND_BURN);
-        }
-    }
-
-    /**
-     * Set sub property by multi key (like "currency:usd"), but just in cache
-     * @param $name
-     * @param $val
-     * @return mixed
-     */
-    protected function cacheTheProp($name, $val)
+    protected function setTheProp(string $name = null, $val = null, int $mod = self::CACHE)
     {
         $this->checkNameIsCorrect($name);
-        return $this->operationSetGet($name, $val, self::SET_AND_CACHE);
+        $setMod = self::CACHE;
+        if(self::BURN === $mod) $setMod = $mod;
+
+        return $this->operationSetGet($name, $val, $setMod);
     }
 
     /**
      * Pick the name, init array parts of the key, read / write / cache
      * @param string $name
      * @param null $newVal
-     * @param $record
+     * @param $mod
      * @return mixed
      */
-    private function operationSetGet(string $name, $newVal = null, $record)
+    private function operationSetGet(string $name, $newVal = null, int $mod)
     {
         $optVal = $this->property->get();
         $branch = &$optVal;
@@ -127,12 +114,12 @@ abstract class AbstractRegistryManager
                     $branch[$part] = $newVal;
 
                     switch (true) {
-                        case (self::SET_AND_BURN === $record):
-                            $this->property->update($optVal);
+                        case (self::BURN === $mod):
+                            $this->property->update($optVal, Option::FORCE);
                             break;
 
-                        case (self::SET_AND_CACHE === $record):
-                            $this->property->cache($optVal);
+                        case (self::CACHE === $mod):
+                            $this->property->update($optVal);
                             break;
                     }
                 } else {
@@ -149,6 +136,15 @@ abstract class AbstractRegistryManager
         }
 
         return $resultVal;
+    }
+
+    /**
+     * Burn the property
+     */
+    protected function burnCache()
+    {
+        $currentVal = $this->property->get();
+        $this->property->update($currentVal, Option::FORCE);
     }
 
     /**
