@@ -110,24 +110,22 @@ abstract class AbstractRegistryManager
             $part = array_shift($aPath);
 
             if ($last === $count) {
-                if (!isset($branch[$part])) {
-                    $branch[$part] = $newVal;
+                switch (true) {
+                    case (self::BURN === $mod):
+                        $branch[$part] = $newVal;
+                        $this->property->update($optVal, Option::FORCE);
+                        break;
 
-                    switch (true) {
-                        case (self::BURN === $mod):
-                            $this->property->update($optVal, Option::FORCE);
-                            break;
+                    case (self::CACHE === $mod):
+                        $branch[$part] = $newVal;
+                        $this->property->update($optVal);
+                        break;
 
-                        case (self::CACHE === $mod):
-                            $this->property->update($optVal);
-                            break;
-                    }
-                } else {
-                    $resultVal = $branch[$part];
+                    case (!isset($branch[$part])):
+                        $branch[$part] = $newVal;
+                        break;
                 }
-            }
-
-            if (!(isset($branch[$part]) && is_array($branch[$part]))) {
+            } elseif (!isset($branch[$part]) || !is_array($branch[$part])) {
                 $branch[$part] = [];
             }
 
