@@ -83,7 +83,7 @@ abstract class AbstractRegistryManager
     {
         $this->checkNameIsCorrect($name);
         $setMod = self::CACHE;
-        if(self::BURN === $mod) $setMod = $mod;
+        if (self::BURN === $mod) $setMod = $mod;
 
         return $this->operationSetGet($name, $val, $setMod);
     }
@@ -123,6 +123,9 @@ abstract class AbstractRegistryManager
 
                     case (!isset($branch[$part])):
                         $branch[$part] = $newVal;
+                        break;
+                    default:
+                        $resultVal = $branch[$part];
                         break;
                 }
             } elseif (!isset($branch[$part]) || !is_array($branch[$part])) {
