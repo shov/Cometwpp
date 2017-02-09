@@ -30,6 +30,7 @@ abstract class AbstractContextController implements \IteratorAggregate, InquireI
     protected $aEntities = [];
     protected $aInquiringCall = [];
     const DEF_INQUIRE_PRIORITY = 10;
+    const DEF_SORT_PRIORITY = 10;
 
     /**
      * AbstractContextEntityController constructor.
@@ -39,6 +40,25 @@ abstract class AbstractContextController implements \IteratorAggregate, InquireI
     {
         Core::getInstance();
         $this->entitiesAutoload($autoLoadPath);
+        $self = $this;
+        uasort($this->aEntities, function ($a, $b) use ($self) {
+            return $self->cmpEntityPriority($a, $b);
+        });
+    }
+
+    /**
+     * Compare function for sort entities array
+     * @param $a
+     * @param $b
+     * @return int
+     */
+    protected function cmpEntityPriority($a, $b): int
+    {
+        $aPr = self::DEF_INQUIRE_PRIORITY;
+        $bPr = self::DEF_INQUIRE_PRIORITY;
+        if($a instanceof SortPriorityInterface) $aPr = $a->sortPriority();
+        if($b instanceof SortPriorityInterface) $bPr = $b->sortPriority();
+        return $aPr - $bPr;
     }
 
     /**
@@ -55,7 +75,7 @@ abstract class AbstractContextController implements \IteratorAggregate, InquireI
      */
     protected function inquiring()
     {
-        ksort($this->aInquiringCall, SORT_NUMERIC );
+        ksort($this->aInquiringCall, SORT_NUMERIC);
         foreach ($this->aInquiringCall as $callStack) {
             foreach ($callStack as $call) {
                 call_user_func($call);
@@ -69,7 +89,8 @@ abstract class AbstractContextController implements \IteratorAggregate, InquireI
      * @param $priority
      * @return mixed
      */
-    public function addInquire(callable $call, $priority = self::DEF_INQUIRE_PRIORITY) {
+    public function addInquire(callable $call, $priority = self::DEF_INQUIRE_PRIORITY)
+    {
         $priority = (int)$priority;
         $this->aInquiringCall[$priority][] = $call;
     }
