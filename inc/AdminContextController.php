@@ -69,6 +69,7 @@ class AdminContextController extends AbstractContextController
     protected function rootAdminPage()
     {
         $html = '';
+        uasort($this->aRootPagePart, [$this, 'cmpEntityPriority']);
         foreach ($this->aRootPagePart as $aPagePart) {
             $html .= $aPagePart->render();
         }
