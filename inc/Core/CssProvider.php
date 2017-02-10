@@ -38,7 +38,7 @@ class CssProvider extends RegistrableRes
      * @param int $context
      * @return string
      */
-    public function registerStyle($name, $dependence = [], $context = self::REGULAR)
+    public function registerStyle(string $name, array $dependence = [], int $context = self::REGULAR)
     {
         $regName = $regName = $this->getClearName($name);
         $url = $this->getUrl($name);
@@ -50,6 +50,11 @@ class CssProvider extends RegistrableRes
             }, $context);
         }
         return $regName;
+    }
+
+    public function registerAdminStyle($name, $dependence = [])
+    {
+        $this->registerStyle($name, $dependence, self::ADMIN);
     }
 
     /**

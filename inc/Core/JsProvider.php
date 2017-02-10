@@ -33,13 +33,13 @@ class JsProvider extends RegistrableRes
 
     /**
      * Try to register script with WP functions
-     * @param $name
+     * @param string $name
      * @param array $dependence
      * @param bool $bInFooter
      * @param int $context
      * @return string
      */
-    public function registerScript($name, $dependence = [], $bInFooter = true, $context = self::REGULAR)
+    public function registerScript(string $name, array $dependence = [], bool $bInFooter = true, int $context = self::REGULAR)
     {
         $regName = $this->getClearName($name);
         $version = false; // don't use it yet
@@ -55,19 +55,29 @@ class JsProvider extends RegistrableRes
         return $regName;
     }
 
+    public function registerAdminScript($name, $dependence = [], $bInFooter = true)
+    {
+        $this->registerScript($name, $dependence, $bInFooter, self::ADMIN);
+    }
+
     /**
      * Add js object to the script
-     * @param $name
+     * @param string $name
      * @param $varName
      * @param array $varValue
      * @param int $context
      */
-    public function addVarToScript($name, $varName, $varValue = [], $context = self::REGULAR)
+    public function addVarToScript(string $name, string $varName, $varValue = [], int $context = self::REGULAR)
     {
         $regName = $this->getClearName($name);
         $this->registerResFor(function () use ($regName, $varName, $varValue) {
             wp_localize_script($regName, $varName, $varValue);
         }, $context);
+    }
+
+    public function addVarToAdminScript($name, $varName, $varValue = [])
+    {
+        $this->addVarToScript($name, $varName, $varValue, self::ADMIN);
     }
 
     /**
