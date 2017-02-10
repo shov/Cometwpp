@@ -21,7 +21,7 @@ if (!defined('ABSPATH')) {
  * @subpackage Core
  * @category Class
  */
-class JsProvider extends ResGraber
+class JsProvider extends RegistrableRes
 {
     /**
      * @param string $dirPath : path to target dir, who will be as root for "queries"
@@ -35,9 +35,11 @@ class JsProvider extends ResGraber
      * Try to register script with WP functions
      * @param $name
      * @param array $dependence
+     * @param bool $bInFooter
+     * @param int $context
      * @return string
      */
-    public function registerScript($name, $dependence = [], $bInFooter = true)
+    public function registerScript($name, $dependence = [], $bInFooter = true, $context = self::REGULAR)
     {
         $regName = $this->getClearName($name);
         $version = false; // don't use it yet
@@ -45,16 +47,27 @@ class JsProvider extends ResGraber
         $url = $this->getUrl($name);
         assert(false !== $url);
         if (false !== $url) {
-            wp_register_script($regName, $url, $dependence, $version, $bInFooter);
-            wp_enqueue_script($regName);
+            $this->registerResFor(function () use ($regName, $url, $dependence, $version, $bInFooter) {
+                wp_register_script($regName, $url, $dependence, $version, $bInFooter);
+                wp_enqueue_script($regName);
+            }, $context);
         }
         return $regName;
     }
 
-    public function addVarToScript($name, $varName, $varValue = [])
+    /**
+     * Add js object to the script
+     * @param $name
+     * @param $varName
+     * @param array $varValue
+     * @param int $context
+     */
+    public function addVarToScript($name, $varName, $varValue = [], $context = self::REGULAR)
     {
         $regName = $this->getClearName($name);
-        wp_localize_script($regName, $varName, $varValue);
+        $this->registerResFor(function () use ($regName, $varName, $varValue) {
+            wp_localize_script($regName, $varName, $varValue);
+        }, $context);
     }
 
     /**

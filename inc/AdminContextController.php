@@ -27,7 +27,6 @@ class AdminContextController extends AbstractContextController
     use TemplateUserTrait;
 
     protected $aRootPagePart = [];
-    protected $aForAdminScriptCallback = [];
 
     /**
      * AdminContextController constructor.
@@ -59,7 +58,6 @@ class AdminContextController extends AbstractContextController
 
         add_action('admin_enqueue_scripts', function () use ($self) {
             wp_enqueue_media();
-            $self->scriptInAdmin();
         });
     }
 
@@ -84,25 +82,6 @@ class AdminContextController extends AbstractContextController
     public function addToRootPage(RenderableThingInterface $pagePart)
     {
         $this->aRootPagePart[] = $pagePart;
-    }
-
-    /**
-     * Call all registered callbacks for admin script load hook
-     */
-    protected function scriptInAdmin()
-    {
-        foreach ($this->aForAdminScriptCallback as $hook) {
-            call_user_func($hook);
-        }
-    }
-
-    /**
-     * Register callback with script/style registration for admin script load hook
-     * @param callable $hook
-     */
-    public function registerScriptInAdmin(callable $hook)
-    {
-        $this->aForAdminScriptCallback[] = $hook;
     }
 
     /**
