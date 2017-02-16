@@ -15,6 +15,8 @@ if (!defined('ABSPATH')) {
  */
 abstract class AbstractSqlBasedModel
 {
+    use PrefixUserTrait;
+
     /**
      * @var \wpdb $db
      */
@@ -23,6 +25,7 @@ abstract class AbstractSqlBasedModel
     public function __construct()
     {
         $this->db = Core::getInstance()->getDbo();
+        $this->setPrefix($this->db->prefix . Core::getInstance()->getPrefix());
     }
 
     /**
@@ -30,13 +33,13 @@ abstract class AbstractSqlBasedModel
      * @return string
      * @throws \Exception
      */
-    protected function addPrefix($table)
+    protected function addPrefixTo($table)
     {
         $table = (string)$table;
         if (empty($table)) throw new \Exception(sprintf('Table name cant be an empty!'));
 
-        if (0 === strpos($table, $this->db->prefix)) return $table;
-        return $this->db->prefix . $table;
+        if (0 === strpos($table, $this->prefix)) return $table;
+        return $this->prefix . $table;
     }
 
     /**
@@ -46,13 +49,14 @@ abstract class AbstractSqlBasedModel
      */
     protected function createTableIfNotExists($table, $sqlFieldsString)
     {
+        $table = $this->addPrefixTo($table);
         if ($this->tableExists($table)) return null;
-        $table = $this->addPrefix($table);
         $query = 'CREATE TABLE ' . $table . ' (
                     id       int(11)  NOT NULL AUTO_INCREMENT,
                     ' . $sqlFieldsString . '
                     PRIMARY KEY(id)
                     ) ENGINE=InnoDB CHARACTER SET=UTF8;';
+
         return $this->db->query($query);
     }
 
@@ -62,9 +66,12 @@ abstract class AbstractSqlBasedModel
      */
     protected function dropTable($table)
     {
-        $table = $this->addPrefix($table);
-        $query = $this->db->prepare('DROP TABLE IF EXISTS %s', $table);
-        return $this->db->query($query);
+        $table = $this->addPrefixTo($table);
+        if($this->tableExists($table)) {
+            $query = "DROP TABLE '" . $table . "'";
+            return $this->db->query($query);
+        }
+        return null;
     }
 
     /**
@@ -73,10 +80,9 @@ abstract class AbstractSqlBasedModel
      */
     protected function tableExists($table)
     {
-        $table = $this->addPrefix($table);
+        $table = $this->addPrefixTo($table);
         $query = "SHOW TABLES LIKE '" . $table . "'";
         $res = $this->db->get_var($query);
-
         return (null !== $res);
     }
 }

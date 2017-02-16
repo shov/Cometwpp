@@ -77,7 +77,7 @@ final class Core
     {
         $aConfig = $this->readConfig($configPath);
 
-        $this->prefix = $this->setPrefix($aConfig['prefix']);
+        $this->setPrefix($aConfig['prefix']);
         $this->pathGenerate($aConfig['path']);
         $this->path = $aConfig['path'];
 

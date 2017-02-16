@@ -12,7 +12,6 @@
 namespace Cometwpp\Core;
 
 use Cometwpp\SingletonTrait;
-use Cometwpp\PrefixUserTrait;
 
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly.
