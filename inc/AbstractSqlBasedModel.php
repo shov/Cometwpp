@@ -42,7 +42,7 @@ abstract class AbstractSqlBasedModel
     /**
      * @param string $table
      * @param string $sqlFieldsString
-     * @return null
+     * @return int|bool
      */
     protected function createTableIfNotExists($table, $sqlFieldsString)
     {
@@ -53,17 +53,18 @@ abstract class AbstractSqlBasedModel
                     ' . $sqlFieldsString . '
                     PRIMARY KEY(id)
                     ) ENGINE=InnoDB CHARACTER SET=UTF8;';
-        $this->db->query($query);
+        return $this->db->query($query);
     }
 
     /**
      * @param string $table
+     * @return int|bool
      */
     protected function dropTable($table)
     {
         $table = $this->addPrefix($table);
         $query = $this->db->prepare('DROP TABLE IF EXISTS %s', $table);
-        $this->db->query($query);
+        return $this->db->query($query);
     }
 
     /**
