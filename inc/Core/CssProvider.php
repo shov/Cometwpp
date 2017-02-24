@@ -41,6 +41,9 @@ class CssProvider extends RegistrableRes
     public function registerStyle(string $name, array $dependence = [], int $context = self::REGULAR)
     {
         $regName = $regName = $this->getClearName($name);
+        foreach ($dependence as $k => $depend) {
+            $dependence[$k] = $this->getClearName($depend);
+        }
         $url = $this->getUrl($name);
         assert(false !== $url);
         if (false !== $url) {
