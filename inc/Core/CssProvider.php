@@ -39,6 +39,9 @@ class CssProvider extends ResGraber
     public function registerStyle($name, $dependence = [])
     {
         $regName = $regName = $this->getClearName($name);
+        foreach ($dependence as $k => $depend) {
+            $dependence[$k] = $this->getClearName($depend);
+        }
         $path = $this->getPath($name);
         assert(false !== $path);
         if (false !== $path) {
