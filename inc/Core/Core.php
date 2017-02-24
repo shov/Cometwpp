@@ -25,6 +25,7 @@ if (!defined('ABSPATH')) {
  */
 final class Core
 {
+
     use SingletonTrait;
 
     /**
@@ -49,13 +50,19 @@ final class Core
         return self::$_inst;
     }
 
+    const NAME_CHECK_REGEXP = '/^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$/';
+
     private $prefix;
     private $path;
     private $name;
 
+    private $cronMaster;
+
     private $ajaxHandler;
     private $session;
     private $registry;
+
+    private $dbo;
 
     private $templater;
     private $jsProvider;
@@ -70,15 +77,20 @@ final class Core
     {
         $aConfig = $this->readConfig($configPath);
 
-        $this->prefix = $this->setPrefix($aConfig['prefix']);
+        $this->setPrefix($aConfig['prefix']);
+        $this->pathGenerate($aConfig['path']);
         $this->path = $aConfig['path'];
 
         $this->name = $aConfig['name'];
+
+        $this->cronMaster = new CronMaster($aConfig['prefix']);
 
         $this->ajaxHandler = new AjaxHandler($aConfig['prefix']);
         $this->session = Session::getInstance($aConfig['prefix']);
 
         $this->registry = Registry::getInstance($aConfig['prefix'], $aConfig['wpoptions']);
+
+        $this->dbo = Dbo::getDb();
 
         $this->templater = new Templater($aConfig['path']['tpl']);
         $this->jsProvider = new JsProvider($aConfig['path']['js']);
@@ -93,9 +105,21 @@ final class Core
     private function setPrefix($prefix)
     {
         if (!is_string($prefix)) return;
-        if (!preg_match('/^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$/', $prefix)) throw new \InvalidArgumentException(sprintf("Wrong prefix: %s", $prefix));
+        if (!preg_match(self::NAME_CHECK_REGEXP, $prefix)) throw new \InvalidArgumentException(sprintf("Wrong prefix: %s", $prefix));
         $this->prefix = $prefix;
         return;
+    }
+
+    private function pathGenerate($aPath = [])
+    {
+        foreach ($aPath as $path) {
+            $isDir = is_dir($path);
+            $exists = file_exists($path);
+            if($exists && !$isDir) throw new \Exception(sprintf("Can't create required directory, %s, file exists", $path));
+            if(!$isDir) {
+                if(!mkdir($path, 0755, true)) throw new \Exception(sprintf("Can't create required directory, %s, php error", $path));
+            }
+        }
     }
 
 
@@ -118,28 +142,28 @@ final class Core
     }
 
     /**
-     *  Do something if plugin has been activated in this runing
-     */
-    public function pluginActivation()
-    {
-        //$this->registry-> skip cron status
-        return;
-    }
-
-    /**
-     *  Do something if plugin has been deactivated in this runing
-     */
-    public function pluginDeactivation()
-    {
-        flush_rewrite_rules(false);
-    }
-
-    /**
+     * @param null|string $spec
      * @return mixed
      */
-    public function getPath()
+    public function getPath($spec = null)
     {
+        if (!is_null($spec)) {
+            $spec = (string)$spec;
+            if (isset($this->path[$spec])) {
+                return $this->path[$spec];
+            } else {
+                return null;
+            }
+        }
         return $this->path;
+    }
+
+    /**
+     * @return CronMaster
+     */
+    public function getCronMaster()
+    {
+        return $this->cronMaster;
     }
 
     /**
@@ -212,5 +236,12 @@ final class Core
     public function getPrefix()
     {
         return $this->prefix;
+    }
+
+    /**
+     * @return object
+     */
+    public function getDbo() {
+        return $this->dbo;
     }
 }

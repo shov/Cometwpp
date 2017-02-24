@@ -16,14 +16,20 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * Return walk name and callback
+ * Base class for the common type feature
  * @package Cometwpp
  * @category Class
  */
-abstract class AbstractCronWalk
+abstract class AbstractFeature
 {
+    protected $context;
+
     /**
-     * @return array ['name' => string, 'interval', 'action' => callable,]
+     * AbstractFeature constructor.
+     * @param ContextController $context
      */
-    abstract public function getWalkAction();
+    public function __construct(ContextController $context)
+    {
+        $this->context = $context;
+    }
 }

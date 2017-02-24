@@ -16,14 +16,11 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * Return walk name and callback
+ * Method @see SortPriorityInterface::sortPriority() returns integer for sort priority known
  * @package Cometwpp
- * @category Class
+ * @category Interface
  */
-abstract class AbstractCronWalk
+interface SortPriorityInterface
 {
-    /**
-     * @return array ['name' => string, 'interval', 'action' => callable,]
-     */
-    abstract public function getWalkAction();
+    public function sortPriority(): int;
 }

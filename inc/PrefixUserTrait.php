@@ -1,8 +1,10 @@
 <?php
 namespace Cometwpp;
 
-if ( ! defined( 'ABSPATH' ) ) {
-  exit; // Exit if accessed directly.
+use Cometwpp\Core\Core;
+
+if (!defined('ABSPATH')) {
+    exit; // Exit if accessed directly.
 }
 
 /**
@@ -12,11 +14,12 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 trait PrefixUserTrait
 {
-  private $prefix = 'cometwpp_';
-  
-  private function setPrefix($prefix) {
-    if(!is_string($prefix)) return false;
-    if(!preg_match('/^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$/', $prefix)) return false;
-    $this->prefix = $prefix;
-  }
+    private $prefix = 'cometwpp_';
+
+    private function setPrefix($prefix)
+    {
+        if (!is_string($prefix)) return false;
+        if (!preg_match(Core::NAME_CHECK_REGEXP, $prefix)) return false;
+        $this->prefix = $prefix;
+    }
 }

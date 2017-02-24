@@ -11,19 +11,15 @@
 
 namespace Cometwpp;
 
+use Cometwpp\Core\Core;
+
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly.
 }
-
 /**
- * Return walk name and callback
- * @package Cometwpp
- * @category Class
+ * @var string $part
  */
-abstract class AbstractCronWalk
-{
-    /**
-     * @return array ['name' => string, 'interval', 'action' => callable,]
-     */
-    abstract public function getWalkAction();
-}
+?>
+    <h1><?= Core::getInstance()->getName() ?></h1>
+    <?php
+echo $part;

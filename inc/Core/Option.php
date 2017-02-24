@@ -27,19 +27,28 @@ class Option
 {
     use PrefixUserTrait;
 
+    const FORCE = true;
+    const CACHE = false;
+    /**
+     * @var string $optionName
+     */
     protected $optionName;
+
+    /**
+     * @var mixed $cache
+     */
+    protected $cachedVal;
 
     /**
      * @param string $prefix
      * @param string $name
      */
-    public function __construct($prefix, $name)
+    public function __construct(string $prefix, string $name)
     {
-        if (is_string($prefix) && !empty($prefix)) $this->setPrefix($prefix);
-        $defaultOptionName = 'options';
+        if (0 !== strlen($prefix)) $this->setPrefix($prefix);
 
-        if (empty($name)) {
-            $this->optionName = $this->prefix . $defaultOptionName;
+        if (0 === strlen($name)) {
+            throw new \InvalidArgumentException(sprintf("Invalid option name! %s given", $name));
         } else {
             $this->optionName = $this->prefix . $name;
         }
@@ -54,15 +63,31 @@ class Option
      */
     public function get($orVal = null)
     {
+        if(!is_null($this->cachedVal)) {
+            return $this->cachedVal;
+        }
         return get_option($this->optionName, $orVal);
     }
 
     /**
      * Update option value
      * @param mixed $val , if not passed, would used an empty array
+     * @param bool $mod FORCE or CACHE, if FORCE, option will be born, cache will be updated any way
+     * @return mixed
      */
-    public function update($val = [])
+    public function update($val = [], bool $mod = self::CACHE)
     {
-        return update_option($this->optionName, $val);
+        $this->cachedVal = $val;
+        if(self::FORCE === $mod) {
+            return update_option($this->optionName, $val);
+        }
+        return $this->cachedVal;
+    }
+
+    public function __destruct()
+    {
+        if(!is_null($this->cachedVal)) {
+            update_option($this->optionName, $this->cachedVal);
+        }
     }
 }

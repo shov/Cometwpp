@@ -11,8 +11,6 @@
 
 namespace Cometwpp;
 
-use Cometwpp\Core\Core;
-
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly.
 }
@@ -22,26 +20,13 @@ if (!defined('ABSPATH')) {
  * @package Cometwpp
  * @category Class
  */
-class SettingsManager
+class SettingsManager extends AbstractRegistryManager
 {
     use SingletonTrait;
 
-    protected $settings;
-    const TRY_GET = false;
-    const SET_ANY_WAY = true;
-    const SETTING_NAME_SEPARATOR = ':';
-
     private function __construct()
     {
-        $registry = Core::getInstance()->getRegistry();
-        $registry->addOption('settings', []);
-        $this->settings = $registry->getSettings();
-
-        $settingsVal = $this->settings->get();
-        assert(is_array($settingsVal));
-        if (!is_array($settingsVal)) {
-            $this->settings->update([]);
-        }
+        $this->setRootProperty('settings');
     }
 
     /**
@@ -53,76 +38,27 @@ class SettingsManager
      */
     public function getSetting($name, $initVal = [])
     {
-        $this->checkNameIsCorrect($name);
-        return $this->operationSetGet($name, $initVal, self::TRY_GET);
+        return $this->getTheProp($name, $initVal);
     }
 
     /**
      * Set setting by multi key (like "currency:usd")
+     * about params @see AbstractRegistryManager::setTheProp()
      * @param $name
      * @param $val
+     * @param int $mod
      * @return mixed
      */
-    public function setSetting($name, $val)
+    public function setSetting($name, $val, int $mod = self::CACHE)
     {
-        $this->$this->checkNameIsCorrect($name);
-        return $this->operationSetGet($name, $val, self::SET_ANY_WAY);
+        return $this->setTheProp($name, $val, $mod);
     }
 
     /**
-     * Pick the name, init array parts of the key, read / write
-     * @param $name
-     * @param null $newVal
-     * @param $record
-     * @return mixed
+     * Burn the settings
      */
-    protected function operationSetGet($name, $newVal = null, $record)
+    public function burnCache()
     {
-        if (!is_bool($record)) throw new \InvalidArgumentException(sprintf("record flag should be bool"));
-        if (!is_string($name) || empty($name)) throw new \InvalidArgumentException(sprintf("name should be not an empty string"));
-
-        $optVal = $this->settings->get();
-        $branch = &$optVal;
-
-        $aPath = explode(self::SETTING_NAME_SEPARATOR, $name);
-        $count = count($aPath);
-        $last = 1;
-
-        $resultVal = $newVal;
-
-        while ($count) {
-            $part = array_shift($aPath);
-
-            if ($last === $count) {
-                $shouldWrite = (!isset($branch[$part]) || (true === $record));
-                if ($shouldWrite) {
-                    $branch[$part] = $newVal;
-                    $this->settings->update($optVal);
-                } else {
-                    $resultVal = $branch[$part];
-                }
-            }
-
-            if (!(isset($branch[$part]) && is_array($branch[$part]))) {
-                $branch[$part] = [];
-            }
-
-            $branch = &$branch[$part];
-            $count--;
-        }
-
-        return $resultVal;
-    }
-
-    /**
-     * Check is passed name correct
-     * @throws \InvalidArgumentException
-     * @param $name
-     */
-    protected function checkNameIsCorrect($name)
-    {
-        if (!preg_match('/^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_'.self::SETTING_NAME_SEPARATOR.'\x7f-\xff]*$/', $name)) {
-            throw new \InvalidArgumentException(sprintf("Cant use this name, its no correct, %s passed", $name));
-        }
+        parent::burnCache();
     }
 }

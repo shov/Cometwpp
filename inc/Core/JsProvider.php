@@ -21,7 +21,7 @@ if (!defined('ABSPATH')) {
  * @subpackage Core
  * @category Class
  */
-class JsProvider extends ResGraber
+class JsProvider extends RegistrableRes
 {
     /**
      * @param string $dirPath : path to target dir, who will be as root for "queries"
@@ -33,10 +33,13 @@ class JsProvider extends ResGraber
 
     /**
      * Try to register script with WP functions
-     * @param $name
+     * @param string $name
      * @param array $dependence
+     * @param bool $bInFooter
+     * @param int $context
+     * @return string
      */
-    public function registerSript($name, $dependence = [], $bInFooter = true)
+    public function registerScript(string $name, array $dependence = [], bool $bInFooter = true, int $context = self::REGULAR)
     {
         $regName = $this->getClearName($name);
         foreach ($dependence as $k => $depend) {
@@ -45,18 +48,40 @@ class JsProvider extends ResGraber
 
         $version = false; // don't use it yet
 
-        $path = $this->getPath($name);
-        assert(false !== $path);
-        if (false !== $path) {
-            wp_register_script($regName, $path, $dependence, $version, $bInFooter);
-            wp_enqueue_script($regName);
+        $url = $this->getUrl($name);
+        assert(false !== $url);
+        if (false !== $url) {
+            $this->registerResFor(function () use ($regName, $url, $dependence, $version, $bInFooter) {
+                wp_register_script($regName, $url, $dependence, $version, $bInFooter);
+                wp_enqueue_script($regName);
+            }, $context);
         }
+        return $regName;
     }
 
-    public function addVarToScript($name, $varName, $varValue = [])
+    public function registerAdminScript($name, $dependence = [], $bInFooter = true)
+    {
+        $this->registerScript($name, $dependence, $bInFooter, self::ADMIN);
+    }
+
+    /**
+     * Add js object to the script
+     * @param string $name
+     * @param $varName
+     * @param array $varValue
+     * @param int $context
+     */
+    public function addVarToScript(string $name, string $varName, $varValue = [], int $context = self::REGULAR)
     {
         $regName = $this->getClearName($name);
-        wp_localize_script($regName, $varName, $varValue);
+        $this->registerResFor(function () use ($regName, $varName, $varValue) {
+            wp_localize_script($regName, $varName, $varValue);
+        }, $context);
+    }
+
+    public function addVarToAdminScript($name, $varName, $varValue = [])
+    {
+        $this->addVarToScript($name, $varName, $varValue, self::ADMIN);
     }
 
     /**

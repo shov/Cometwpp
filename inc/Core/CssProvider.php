@@ -21,7 +21,7 @@ if (!defined('ABSPATH')) {
  * @subpackage Core
  * @category Class
  */
-class CssProvider extends ResGraber
+class CssProvider extends RegistrableRes
 {
     /**
      * @param string $dirPath : path to target dir, who will be as root for "queries"
@@ -35,19 +35,26 @@ class CssProvider extends ResGraber
      * Try to register style with WP functions
      * @param $name
      * @param array $dependence
+     * @param int $context
+     * @return string
      */
-    public function registerStyle($name, $dependence = [])
+    public function registerStyle(string $name, array $dependence = [], int $context = self::REGULAR)
     {
         $regName = $regName = $this->getClearName($name);
-        foreach ($dependence as $k => $depend) {
-            $dependence[$k] = $this->getClearName($depend);
+        $url = $this->getUrl($name);
+        assert(false !== $url);
+        if (false !== $url) {
+            $this->registerResFor(function () use ($regName, $url, $dependence) {
+                wp_register_style($regName, $url, $dependence);
+                wp_enqueue_style($regName);
+            }, $context);
         }
-        $path = $this->getPath($name);
-        assert(false !== $path);
-        if (false !== $path) {
-            wp_register_style($regName, $path, $dependence);
-            wp_enqueue_style($regName);
-        }
+        return $regName;
+    }
+
+    public function registerAdminStyle($name, $dependence = [])
+    {
+        $this->registerStyle($name, $dependence, self::ADMIN);
     }
 
     /**

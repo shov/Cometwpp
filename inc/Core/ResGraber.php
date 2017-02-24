@@ -29,25 +29,23 @@ class ResGraber
     /**
      * @param array $aConf = ['dir_path' => string, 'ext' => string|array ]
      */
-    public function __construct($aConf)
+    public function __construct(array $aConf)
     {
         $this->dirPath = __DIR__;
         $this->aExt = ['php',];
 
-        if (is_array($aConf)) {
-            if (is_dir($aConf['dir_path'])) $this->dirPath = $aConf['dir_path'];
-            if (!empty($aConf['ext'])) {
-                if (is_string($aConf['ext'])) {
-                    $this->aExt = [$aConf['ext'],];
-                } elseif (is_array($aConf['ext'])) {
-                    $aTmp = [];
-                    foreach ($aConf['ext'] as $sExt) {
-                        $s = (string)$sExt;
-                        if (!empty($sExt)) $aTmp [] = $s;
-                    }
-                    array_unique($aTmp);
-                    $this->aExt = $aTmp;
+        if (is_dir($aConf['dir_path'])) $this->dirPath = $aConf['dir_path'];
+        if (!empty($aConf['ext'])) {
+            if (is_string($aConf['ext'])) {
+                $this->aExt = [$aConf['ext'],];
+            } elseif (is_array($aConf['ext'])) {
+                $aTmp = [];
+                foreach ($aConf['ext'] as $sExt) {
+                    $s = (string)$sExt;
+                    if (!empty($sExt)) $aTmp [] = $s;
                 }
+                array_unique($aTmp);
+                $this->aExt = $aTmp;
             }
         }
     }
@@ -111,6 +109,7 @@ class ResGraber
         $fullName = null;
         foreach ($this->aExt as $sExt) {
             $sTmp = $halfFulPath . '.' . $sExt;
+            assert(is_readable($sTmp), sprintf("For a while we trying got: Not readable res '%s'", $sTmp));
             if (is_readable($sTmp)) {
                 $fullName = $sTmp;
                 break;
@@ -144,7 +143,7 @@ class ResGraber
         assert(!empty($name));
 
         $res = $this->makeNamePath($name);
-        assert(is_readable($res), sprintf('For %s', $res));
+        assert(is_readable($res), sprintf('Bad path for name %s', $name));
 
         if(!is_readable($res)) return false;
         return $res;

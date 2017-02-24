@@ -16,14 +16,20 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * Return walk name and callback
+ * Base class for the models who save data Registry based way
  * @package Cometwpp
  * @category Class
  */
-abstract class AbstractCronWalk
+abstract class AbstractRegistryBasedModel extends AbstractRegistryManager
 {
+    protected $context;
+
     /**
-     * @return array ['name' => string, 'interval', 'action' => callable,]
+     * AbstractRegistryBasedModel constructor.
+     * @param ContextController $context
      */
-    abstract public function getWalkAction();
+    public function __construct(ContextController $context)
+    {
+        $this->context = $context;
+    }
 }

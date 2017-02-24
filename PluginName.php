@@ -80,7 +80,7 @@ final class PluginName implements PluginControlInterface
     {
         /* Up Core */
         Core::init(__DIR__ . DIRECTORY_SEPARATOR . 'config.php');
-        $this->core = Core::getInstance();
+        $core = Core::getInstance();
 
         /* Make Setup */
         $this->makePluginSetup();
@@ -88,13 +88,13 @@ final class PluginName implements PluginControlInterface
         /* Context instances */
         $contextManager = ContextManager::getInstance();
         $contextManager::registerContextController('business', new ContextController('Model'));
-        $contextManager::registerContextController('cron', new CronWalker('Walk'));
         $contextManager::registerContextController('admin', new AdminContextController('Admin'));
         $contextManager::registerContextController('client', new ContextController('Feature'));
+        $contextManager::registerContextController('cron', new CronWalker('Walk'));
     }
 
     /**
-     *
+     * Plugin setup in WP hooks
      */
     private function makePluginSetup()
     {
@@ -105,13 +105,11 @@ final class PluginName implements PluginControlInterface
         }
 
         register_activation_hook(__FILE__, function () use ($self) {
-            $core = Core::getInstance();
-            $core->pluginActivation();
+
         });
 
         register_deactivation_hook(__FILE__, function () use ($self) {
-            $core = Core::getInstance();
-            $core->pluginDeactivation();
+            flush_rewrite_rules(false);
         });
 
         /*register_uninstall_hook(__FILE__, function(){

@@ -32,10 +32,10 @@ trait EntityLoaderTrait
         if (!isset($this->aEntities)) throw new \Exception(sprintf('Trait extender should has $aEntities filed'));
 
         $path = (string)$path;
-        $fullPath = $path;
 
-        if(false === $deepStep) {
-            $fullPath = $core->getPath()['inc'] . DIRECTORY_SEPARATOR . $path;
+        $fullPath = $core->getPath($path);
+        if (false !== $deepStep) {
+            $fullPath .= DIRECTORY_SEPARATOR . $deepStep;
         }
 
         if (!is_dir($fullPath)) throw new \InvalidArgumentException(sprintf("Path should be an directory, '%s' given. Path part is %s", $fullPath, $path));
@@ -46,19 +46,18 @@ trait EntityLoaderTrait
         foreach ($entityDir as $fileInfo) {
             if ($fileInfo->isDot() || !$fileInfo->isReadable()) continue;
 
-            if((false === $deepStep) && $fileInfo->isDir()) { //go one step to the deep the entity, who has own folder
-                $pathToStep = $fileInfo->getPathname();
+            if ((false === $deepStep) && $fileInfo->isDir()) { //go one step to the deep the entity, who has own folder
                 $lookingFor = $fileInfo->getBasename();
-                $this->entitiesAutoload($pathToStep, $lookingFor);
+                $this->entitiesAutoload($path, $lookingFor);
             }
 
-            if(!$fileInfo->isFile()) continue;
+            if (!$fileInfo->isFile()) continue;
 
             if ('php' === $fileInfo->getExtension()) {
                 $expectedClassName = $fileInfo->getBasename('.php');
 
-                if(false !== $deepStep) {
-                    if($deepStep != $expectedClassName) continue;
+                if (false !== $deepStep) {
+                    if ($deepStep != $expectedClassName) continue;
                 }
 
                 $file = new \SplFileObject($fileInfo->getPathname());
@@ -80,11 +79,25 @@ trait EntityLoaderTrait
 
         $nameSpace = '\\' . explode("\\", __NAMESPACE__)[0];
         $nameSpace .= '\\' . str_replace(DIRECTORY_SEPARATOR, "\\", $path) . '\\';
-        //$nameSpace = preg_replace('/[\\]{2,}/gi', '\\', $nameSpace);
+
+        if(false !== $deepStep) {
+            $nameSpace .= $deepStep . "\\";
+        }
 
         foreach ($aEntityClasses as $className) {
             $reflect = new \ReflectionClass($nameSpace . $className);
-            $this->aEntities[$className] = $reflect->newInstanceArgs();
+            $reflectConstruct = new \ReflectionMethod($nameSpace . $className, '__construct');
+            $aParams = $reflectConstruct->getParameters();
+
+            $aParamsToCreate = [];
+
+            $condToCreateWithContext = ((1 === count($aParams)) && (get_class($this) === $aParams[0]->getClass()->getName()));
+            if ($condToCreateWithContext) $aParamsToCreate[] = $this;
+
+            $this->aEntities[$className] = $reflect->newInstanceArgs($aParamsToCreate);
+
+            $aParams = null;
+            $reflectConstruct = null;
             $reflect = null;
         }
     }

@@ -31,7 +31,9 @@ class ContextManager
         self::getInstance();
         if (empty($name) || !is_string($name)) throw new \InvalidArgumentException(sprintf("Bad key name for context controller, %s passed", $name));
 
-        if (!in_array($controller, self::$pull)) self::$pull[] = $controller;
+        if (key_exists($name, self::$pull)) throw new \Exception(sprintf("Some Context controller already been registered with name: '%s'", $name));
+
+        if (!in_array($controller, self::$pull)) self::$pull[$name] = $controller;
     }
 
     public static function unRegisterContextController(AbstractContextController $controller)

@@ -27,7 +27,6 @@ class AdminContextController extends AbstractContextController
     use TemplateUserTrait;
 
     protected $aRootPagePart = [];
-    protected $aForAdminScriptCallback = [];
 
     /**
      * AdminContextController constructor.
@@ -38,6 +37,8 @@ class AdminContextController extends AbstractContextController
         parent::__construct($autoLoadPath);
         $this->wouldUseTemplate();
         $this->setupAdminPanel();
+        $this->registerAjaxSheaf();
+        $this->inquiring();
     }
 
     /**
@@ -57,7 +58,6 @@ class AdminContextController extends AbstractContextController
 
         add_action('admin_enqueue_scripts', function () use ($self) {
             wp_enqueue_media();
-            $self->scriptInAdmin();
         });
     }
 
@@ -67,12 +67,11 @@ class AdminContextController extends AbstractContextController
     protected function rootAdminPage()
     {
         $html = '';
+        uasort($this->aRootPagePart, [$this, 'cmpEntityPriority']);
         foreach ($this->aRootPagePart as $aPagePart) {
             $html .= $aPagePart->render();
         }
-        $this->templater->display('Admin:index', [
-            'part' => $html,
-        ]);
+        $this->templater->display('Admin:index', ['part' => $html,]);
     }
 
 
@@ -86,21 +85,22 @@ class AdminContextController extends AbstractContextController
     }
 
     /**
-     * Call all registered callbacks for admin script load hook
+     * Register all entities thought SheafAjaxSetter
      */
-    protected function scriptInAdmin()
+    protected function registerAjaxSheaf()
     {
-        foreach ($this->aForAdminScriptCallback as $hook) {
-            call_user_func($hook);
+        $sheafAjaxSetter = new SheafAjaxSetter();
+        foreach ($this->aEntities as $entity) {
+            /*
+             * We try to pass each entity to method as AjaxUserInterface\
+             * if it's not, we got an Error, then catch it and go ahead
+             */
+            try {
+                $sheafAjaxSetter->addCandidate($entity);
+            } catch (\Error $e) {
+                ; //just skip no AjaxUserInterface
+            }
         }
-    }
-
-    /**
-     * Register callback with script/style registration for admin script load hook
-     * @param callable $hook
-     */
-    public function registerScriptInAdmin(callable $hook)
-    {
-        $this->aForAdminScriptCallback[] = $hook;
+        $sheafAjaxSetter->registerCandidates();
     }
 }
