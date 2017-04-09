@@ -63,7 +63,7 @@ abstract class AbstractSqlDaoModel extends AbstractSqlBasedModel implements DaoM
     public function findByCriteria(CriteriaInterface $criteria): ?DtoInterface
     {
         $criteriaQuery = $this->parseCriteriaToSql($criteria);
-        $query = $this->db->prepare("SELECT * FROM $this->prefixedTableName WHERE $criteriaQuery");
+        $query = "SELECT * FROM $this->prefixedTableName WHERE $criteriaQuery";
         $result = $this->db->get_row($query, ARRAY_A);
 
         return $this->dtoFactoryByResultArray($result);
