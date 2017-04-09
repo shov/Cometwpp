@@ -30,5 +30,6 @@ class ContextController extends AbstractContextController
     public function __construct($autoLoadPath)
     {
         parent::__construct($autoLoadPath);
+        $this->inquiring();
     }
 }
