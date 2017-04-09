@@ -47,7 +47,7 @@ abstract class AbstractSqlDaoModel extends AbstractSqlBasedModel implements DaoM
      * @param int $id
      * @return DtoInterface
      */
-    public function findById(int $id): DtoInterface
+    public function findById(int $id): ?DtoInterface
     {
         $query = $this->db->prepare("SELECT * FROM $this->prefixedTableName WHERE id = %d", $id);
         $result = $this->db->get_row($query, ARRAY_A);
@@ -60,7 +60,7 @@ abstract class AbstractSqlDaoModel extends AbstractSqlBasedModel implements DaoM
      * @param CriteriaInterface $criteria
      * @return DtoInterface
      */
-    public function findByCriteria(CriteriaInterface $criteria): DtoInterface
+    public function findByCriteria(CriteriaInterface $criteria): ?DtoInterface
     {
         $criteriaQuery = $this->parseCriteriaToSql($criteria);
         $query = $this->db->prepare("SELECT * FROM $this->prefixedTableName WHERE $criteriaQuery");
@@ -74,7 +74,7 @@ abstract class AbstractSqlDaoModel extends AbstractSqlBasedModel implements DaoM
      * @param CriteriaInterface $criteria
      * @return array of DtoInterface
      */
-    public function findAllByCriteria(CriteriaInterface $criteria): array
+    public function findAllByCriteria(CriteriaInterface $criteria): ?array
     {
         $criteriaQuery = $this->parseCriteriaToSql($criteria);
         $query = $this->db->prepare("SELECT * FROM $this->prefixedTableName WHERE $criteriaQuery");
@@ -95,7 +95,7 @@ abstract class AbstractSqlDaoModel extends AbstractSqlBasedModel implements DaoM
      * @return mixed|void
      * @throws Error
      */
-    public function save(DtoInterface $dto)
+    public function save(?DtoInterface $dto = null)
     {
         if(is_null($dto)) return null;
 
@@ -107,23 +107,27 @@ abstract class AbstractSqlDaoModel extends AbstractSqlBasedModel implements DaoM
         $dtoReflection = new ReflectionClass($this->getDtoClass());
         $dtoProps = $dtoReflection->getProperties(ReflectionProperty::IS_PUBLIC);
         $toWriteValues = [];
+        $format = [];
 
         foreach ($dtoProps as $prop) {
             $propName = $prop->getName();
             if('id' === $propName) continue;
 
             if (isset($dto->$propName)) {
+                $format[] = (is_numeric($dto->$propName) ? (is_int($dto->$propName) ? '%d' : '%f') : '%s');
                 $toWriteValues[$propName] = $dto->$propName;
             }
         }
 
         $self = $this;
-        $insertNew = function () use ($toWriteValues, $self) {
-            return $self->db->insert($self->prefixedTableName, $toWriteValues);
+        $insertNew = function () use ($toWriteValues, $format, $self, $dto) {
+            if($self->db->insert($self->prefixedTableName, $toWriteValues, $format)) {
+                $dto->setId($self->db->insert_id);
+            }
         };
 
-        $updateExists = function () use ($toWriteValues, $self, $dto) {
-            return $self->db->update($self->prefixedTableName, $toWriteValues, ['id' => $dto->getId(),]);
+        $updateExists = function () use ($toWriteValues, $format, $self, $dto) {
+            $self->db->update($self->prefixedTableName, $toWriteValues, ['id' => $dto->getId(),], $format);
         };
 
         $action = null;
@@ -139,7 +143,7 @@ abstract class AbstractSqlDaoModel extends AbstractSqlBasedModel implements DaoM
                 $action = $insertNew;
         }
 
-        return $action();
+        $action();
     }
 
     /**
@@ -156,19 +160,23 @@ abstract class AbstractSqlDaoModel extends AbstractSqlBasedModel implements DaoM
         $fieldNameQuote = "`";
         $assert = null;
         while (count($assertions) > 0) {
+            $first = (is_null($assert));
+
             $assert = array_pop($assertions);
             $subPart = '';
 
-            switch ($assert[Criteria::CONCAT_INDEX]) {
-                case Criteria:: AND:
-                    $subPart .= ' AND ';
-                    break;
-                case Criteria:: OR:
-                    $subPart .= ' OR ';
-                    break;
-                default:
-                    continue;
-                    break;
+            if(!$first) {
+                switch ($assert[Criteria::CONCAT_INDEX]) {
+                    case Criteria:: AND:
+                        $subPart .= ' AND ';
+                        break;
+                    case Criteria:: OR:
+                        $subPart .= ' OR ';
+                        break;
+                    default:
+                        continue;
+                        break;
+                }
             }
 
             $subPart .= $spaceStr . $fieldNameQuote . $assert[Criteria::NAME_INDEX] . $fieldNameQuote . $spaceStr;
@@ -200,7 +208,7 @@ abstract class AbstractSqlDaoModel extends AbstractSqlBasedModel implements DaoM
      * @return DtoInterface
      * @throws Error
      */
-    protected function dtoFactoryByResultArray(array $result = null): DtoInterface
+    protected function dtoFactoryByResultArray(array $result = null): ?DtoInterface
     {
         if(is_null($result)) return null;
         $dtoReflection = new ReflectionClass($this->getDtoClass());

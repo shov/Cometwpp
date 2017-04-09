@@ -22,11 +22,11 @@ if (!defined('ABSPATH')) {
  */
 interface DaoModelInterface
 {
-    public function save(DtoInterface $dto);
+    public function save(?DtoInterface $dto = null);
 
-    public function findById(int $id): DtoInterface;
+    public function findById(int $id): ?DtoInterface;
 
-    public function findByCriteria(CriteriaInterface $criteria): DtoInterface;
+    public function findByCriteria(CriteriaInterface $criteria): ?DtoInterface;
 
-    public function findAllByCriteria(CriteriaInterface $criteria): array;
+    public function findAllByCriteria(CriteriaInterface $criteria): ?array;
 }
