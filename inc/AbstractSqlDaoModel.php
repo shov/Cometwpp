@@ -194,8 +194,12 @@ abstract class AbstractSqlDaoModel extends AbstractSqlBasedModel implements DaoM
             }
 
             $value = $assert[Criteria::VAL_INDEX];
-            $quotes = (is_numeric($value)) ? '' : "'";
-            $subPart .= $spaceStr . $quotes . $value . $quotes . $spaceStr;
+
+            if(is_numeric($value)) {
+                $subPart .= $spaceStr . $value . $spaceStr;
+            } else {
+                $subPart .= $spaceStr . $this->db->prepare("%s", $value);
+            }
 
             $queryPart .= $subPart;
         }
