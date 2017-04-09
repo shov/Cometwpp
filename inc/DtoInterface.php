@@ -16,12 +16,13 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * Can display some html
+ * Data Transfer Object common interface
  * @package Cometwpp
  * @category Interface
  */
-
-interface RenderableThingInterface
+interface DtoInterface
 {
-    public function render();
+    public function getId(): int;
+
+    public function setId(int $id);
 }

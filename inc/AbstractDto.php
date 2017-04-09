@@ -16,12 +16,22 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * Can display some html
+ * Base for all Dto instances
+ * @see DtoInterface
  * @package Cometwpp
- * @category Interface
+ * @category Class
  */
-
-interface RenderableThingInterface
+abstract class AbstractDto implements DtoInterface
 {
-    public function render();
+    public $id;
+
+    public function getId(): int
+    {
+        return (int)$this->id;
+    }
+
+    public function setId(int $id)
+    {
+        $this->id = $id;
+    }
 }

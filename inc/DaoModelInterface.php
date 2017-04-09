@@ -16,12 +16,17 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * Can display some html
+ * Present the model as data access object
  * @package Cometwpp
  * @category Interface
  */
-
-interface RenderableThingInterface
+interface DaoModelInterface
 {
-    public function render();
+    public function save(DtoInterface $dto);
+
+    public function findById(int $id): DtoInterface;
+
+    public function findByCriteria(CriteriaInterface $criteria): DtoInterface;
+
+    public function findAllByCriteria(CriteriaInterface $criteria): array;
 }
