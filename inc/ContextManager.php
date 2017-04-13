@@ -24,6 +24,11 @@ class ContextManager
 {
     use SingletonTrait;
 
+    public const BUSINESS = 'business';
+    public const ADMIN = 'admin';
+    public const CLIENT = 'client';
+    public const CRON = 'cron';
+
     protected static $pull = [];
 
     public static function registerContextController($name, AbstractContextController $controller)

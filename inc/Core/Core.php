@@ -69,6 +69,8 @@ final class Core
     private $cssProvider;
     private $imgProvider;
 
+    private $defaultTimezone;
+
     /**
      * Core constructor.
      * @param string $configPath
@@ -96,18 +98,17 @@ final class Core
         $this->jsProvider = new JsProvider($aConfig['path']['js']);
         $this->cssProvider = new CssProvider($aConfig['path']['css']);
         $this->imgProvider = new ImgProvider($aConfig['path']['img']);
+
+        $this->defaultTimezone = $aConfig['default_timezone'] ?? null;
     }
 
     /**
-     * @param $prefix
-     * @return null
+     * @param string $prefix
      */
-    private function setPrefix($prefix)
+    private function setPrefix(string $prefix): void
     {
-        if (!is_string($prefix)) return;
         if (!preg_match(self::NAME_CHECK_REGEXP, $prefix)) throw new \InvalidArgumentException(sprintf("Wrong prefix: %s", $prefix));
         $this->prefix = $prefix;
-        return;
     }
 
     private function pathGenerate($aPath = [])
@@ -128,9 +129,9 @@ final class Core
      * @param string $configPath : is path to config php file
      * @throws \InvalidArgumentException
      * @throws \UnexpectedValueException
-     * @return false|array
+     * @return array
      */
-    private function readConfig($configPath)
+    private function readConfig(string $configPath): array
     {
         if (!is_readable($configPath)) throw new \InvalidArgumentException(sprintf("Wrong config file to read: %s", $configPath));
 
@@ -145,7 +146,7 @@ final class Core
      * @param null|string $spec
      * @return mixed
      */
-    public function getPath($spec = null)
+    public function getPath(?string $spec = null): ?string
     {
         if (!is_null($spec)) {
             $spec = (string)$spec;
@@ -243,5 +244,14 @@ final class Core
      */
     public function getDbo() {
         return $this->dbo;
+    }
+
+    /**
+     * Return default timezone, NO setup it, just return
+     * @return null|string
+     */
+    public function getDefaultTimezone(): ?string
+    {
+        return $this->defaultTimezone;
     }
 }

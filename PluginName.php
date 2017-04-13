@@ -47,20 +47,8 @@ final class PluginName implements PluginControlInterface
     public static function init()
     {
         if (self::$_inst === null) {
-            spl_autoload_register(function ($name) {
-                $nameParts = explode('\\', $name);
-                $nameParts = array_slice($nameParts, 1);
-                $baseIncPath = __DIR__ . DIRECTORY_SEPARATOR . 'inc';
-                $fullPath = $baseIncPath;
 
-                foreach ($nameParts as $key => $part) {
-                    $fullPath .= DIRECTORY_SEPARATOR . $part;
-                }
-                $fullPath .= '.php';
-
-                if (is_readable($fullPath)) require $fullPath;
-            }, true, true);
-
+            self::autoloadRegister();
             self::$_inst = new self();
         }
     }
@@ -82,21 +70,38 @@ final class PluginName implements PluginControlInterface
         Core::init(__DIR__ . DIRECTORY_SEPARATOR . 'config.php');
         $core = Core::getInstance();
 
+        $this->setupDefaultTimezone();
+
+        /* Try to include Composer autoload */
+        $this->composerAutoload();
+
         /* Make Setup */
         $this->makePluginSetup();
 
         /* Context instances */
         $contextManager = ContextManager::getInstance();
-        $contextManager::registerContextController('business', new ContextController('Model'));
-        $contextManager::registerContextController('admin', new AdminContextController('Admin'));
-        $contextManager::registerContextController('client', new ContextController('Feature'));
-        $contextManager::registerContextController('cron', new CronWalker('Walk'));
+
+        $contextManager
+            ::registerContextController(ContextManager::BUSINESS,
+                new ContextController(ContextManager::BUSINESS));
+
+        $contextManager
+            ::registerContextController(ContextManager::ADMIN,
+                new AdminContextController(ContextManager::ADMIN));
+
+        $contextManager
+            ::registerContextController(ContextManager::CLIENT,
+                new ContextController(ContextManager::CLIENT));
+
+        $contextManager
+            ::registerContextController(ContextManager::CRON,
+                new CronWalker(ContextManager::CRON));
     }
 
     /**
      * Plugin setup in WP hooks
      */
-    private function makePluginSetup()
+    private function makePluginSetup(): void
     {
         $self = $this;
 
@@ -120,10 +125,41 @@ final class PluginName implements PluginControlInterface
     /**
      * @return mixed
      */
-    public static function getClientInstance()
+    public static function getClientInstance(): ContextController
     {
         self::init();
         return ContextManager::getContextController('client');
+    }
+
+    private static function autoloadRegister(): void
+    {
+        spl_autoload_register(function ($name) {
+            $nameParts = explode('\\', $name);
+            $nameParts = array_slice($nameParts, 1);
+            $baseIncPath = __DIR__ . DIRECTORY_SEPARATOR . 'inc';
+            $fullPath = $baseIncPath;
+
+            foreach ($nameParts as $key => $part) {
+                $fullPath .= DIRECTORY_SEPARATOR . $part;
+            }
+            $fullPath .= '.php';
+
+            if (is_readable($fullPath)) require $fullPath;
+        }, true, true);
+    }
+
+    private function composerAutoload(): void
+    {
+        $composerAutoloadPath = Core::getInstance()->getPath('composer');
+        if(!is_null($composerAutoloadPath) && is_readable($composerAutoloadPath)) {
+            include_once($composerAutoloadPath);
+        }
+    }
+
+    private function setupDefaultTimezone()
+    {
+        $dtz = Core::getInstance()->getDefaultTimezone();
+        if(!is_null($dtz)) @date_default_timezone_set($dtz);
     }
 }
 
