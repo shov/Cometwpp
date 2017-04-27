@@ -151,7 +151,7 @@ final class PluginName implements PluginControlInterface
     private function composerAutoload(): void
     {
         $composerAutoloadPath = Core::getInstance()->getPath('composer');
-        if(!is_null($composerAutoloadPath) && is_readable($composerAutoloadPath)) {
+        if(!is_null($composerAutoloadPath) && is_file($composerAutoloadPath)) {
             include_once($composerAutoloadPath);
         }
     }
