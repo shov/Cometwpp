@@ -44,8 +44,8 @@ $aIncEntity = [
     ContextManager::CRON => 'Walk',
 ];
 
-foreach ($aIncEntity as $contextKey => $incEntity) {
-    $aConfig['path'][$contextKey] = $aConfig['path']['inc'] . DS . $incEntity;
+foreach ($aIncEntity as $incEntity) {
+    $aConfig['path'][$incEntity] = $aConfig['path']['inc'] . DS . $incEntity;
 }
 
 foreach ($aIncEntity as $contextKey => $incEntity) {
