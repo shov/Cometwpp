@@ -149,7 +149,7 @@ final class Core
      * @param null|string $spec
      * @return mixed
      */
-    public function getPath(?string $spec = null): ?string
+    public function getPath(?string $spec = null)
     {
         if (!is_null($spec)) {
             $spec = (string)$spec;
