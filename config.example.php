@@ -48,5 +48,9 @@ foreach ($aIncEntity as $contextKey => $incEntity) {
     $aConfig['path'][$contextKey] = $aConfig['path']['inc'] . DS . $incEntity;
 }
 
+foreach ($aIncEntity as $contextKey => $incEntity) {
+    $aConfig['namespace'][$contextKey] = $incEntity;
+}
+
 $composerRelPath = 'Mod' . DS . 'Composer' . DS . 'vendor' . DS . 'autoload.php';
 $aConfig['path']['composer'] = $aConfig['path']['inc'] . DS . $composerRelPath;

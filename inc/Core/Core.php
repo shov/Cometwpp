@@ -54,6 +54,7 @@ final class Core
 
     private $prefix;
     private $path;
+    private $namespaces;
     private $name;
 
     private $cronMaster;
@@ -100,6 +101,8 @@ final class Core
         $this->imgProvider = new ImgProvider($aConfig['path']['img']);
 
         $this->defaultTimezone = $aConfig['default_timezone'] ?? null;
+
+        $this->namespaces = $aConfig['namespace'] ?? [];
     }
 
     /**
@@ -157,6 +160,16 @@ final class Core
             }
         }
         return $this->path;
+    }
+
+    /**
+     * Get hint about namespace for key
+     * @param string $key
+     * @return null|string
+     */
+    public function getNamespace(string $key): ?string
+    {
+        return $this->namespaces[$key] ?? null;
     }
 
     /**
