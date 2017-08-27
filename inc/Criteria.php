@@ -27,6 +27,14 @@ class Criteria implements CriteriaInterface
     const EQUAL = 'equal';
     const NOT_EQUAL = 'notEqual';
 
+    const IS_NULL = 'isNull';
+    const IS_NOT_NULL = 'isNotNull';
+
+    const FIELD_CONDS = [
+        self::IS_NULL,
+        self::IS_NOT_NULL,
+    ];
+
     const AND = 'and';
     const OR = 'or';
 
@@ -82,6 +90,46 @@ class Criteria implements CriteriaInterface
             static::COND_INDEX => static::NOT_EQUAL,
             static::NAME_INDEX => $fieldName,
             static::VAL_INDEX => $value,
+        ];
+        return $this;
+    }
+
+    public function andFieldIsNull(string $fieldName): CriteriaInterface
+    {
+        $this->assertions[] = [
+            static::CONCAT_INDEX => static::AND,
+            static::COND_INDEX => static::IS_NULL,
+            static::NAME_INDEX => $fieldName,
+        ];
+        return $this;
+    }
+
+    public function orFieldIsNull(string $fieldName): CriteriaInterface
+    {
+        $this->assertions[] = [
+            static::CONCAT_INDEX => static::OR,
+            static::COND_INDEX => static::IS_NULL,
+            static::NAME_INDEX => $fieldName,
+        ];
+        return $this;
+    }
+
+    public function andFieldIsNotNull(string $fieldName): CriteriaInterface
+    {
+        $this->assertions[] = [
+            static::CONCAT_INDEX => static::AND,
+            static::COND_INDEX => static::IS_NOT_NULL,
+            static::NAME_INDEX => $fieldName,
+        ];
+        return $this;
+    }
+
+    public function orFieldIsNotNull(string $fieldName): CriteriaInterface
+    {
+        $this->assertions[] = [
+            static::CONCAT_INDEX => static::OR,
+            static::COND_INDEX => static::IS_NOT_NULL,
+            static::NAME_INDEX => $fieldName,
         ];
         return $this;
     }

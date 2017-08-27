@@ -97,7 +97,7 @@ abstract class AbstractSqlDaoModel extends AbstractSqlBasedModel implements DaoM
      */
     public function save(?DtoInterface &$dto = null)
     {
-        if(is_null($dto)) return null;
+        if (is_null($dto)) return null;
 
         $dtoClass = $this->getDtoClass();
         if (false === ($dto instanceof $dtoClass)) {
@@ -111,7 +111,7 @@ abstract class AbstractSqlDaoModel extends AbstractSqlBasedModel implements DaoM
 
         foreach ($dtoProps as $prop) {
             $propName = $prop->getName();
-            if('id' === $propName) continue;
+            if ('id' === $propName) continue;
 
             if (isset($dto->$propName)) {
                 $format[] = ((is_numeric($dto->$propName) && !is_string($dto->$propName)) ? (is_int($dto->$propName) ? '%d' : '%f') : '%s');
@@ -121,7 +121,7 @@ abstract class AbstractSqlDaoModel extends AbstractSqlBasedModel implements DaoM
 
         $self = $this;
         $insertNew = function () use ($toWriteValues, $format, $self, &$dto) {
-            if($self->db->insert($self->prefixedTableName, $toWriteValues, $format)) {
+            if ($self->db->insert($self->prefixedTableName, $toWriteValues, $format)) {
                 $dto->setId($self->db->insert_id);
             }
         };
@@ -132,11 +132,11 @@ abstract class AbstractSqlDaoModel extends AbstractSqlBasedModel implements DaoM
 
         $action = null;
 
-        switch(true) {
+        switch (true) {
             case (!isset($dto->id) || is_null($dto->id)):
                 $action = $insertNew;
                 break;
-            case (!is_null( $this->findById($dto->getId()) )):
+            case (!is_null($this->findById($dto->getId()))):
                 $action = $updateExists;
                 break;
             default:
@@ -165,7 +165,7 @@ abstract class AbstractSqlDaoModel extends AbstractSqlBasedModel implements DaoM
             $assert = array_pop($assertions);
             $subPart = '';
 
-            if(!$first) {
+            if (!$first) {
                 switch ($assert[Criteria::CONCAT_INDEX]) {
                     case Criteria:: AND:
                         $subPart .= ' AND ';
@@ -181,24 +181,41 @@ abstract class AbstractSqlDaoModel extends AbstractSqlBasedModel implements DaoM
 
             $subPart .= $spaceStr . $fieldNameQuote . $assert[Criteria::NAME_INDEX] . $fieldNameQuote . $spaceStr;
 
-            switch ($assert[Criteria::COND_INDEX]) {
-                case Criteria::EQUAL:
-                    $subPart .= ' = ';
-                    break;
-                case Criteria::NOT_EQUAL:
-                    $subPart .= ' <> ';
-                    break;
-                default:
-                    continue;
-                    break;
-            }
+            if (in_array($assert[Criteria::COND_INDEX], Criteria::FIELD_CONDS)) {
 
-            $value = $assert[Criteria::VAL_INDEX];
+                switch ($assert[Criteria::COND_INDEX]) {
+                    case Criteria::IS_NULL:
+                        $subPart .= ' IS NULL ';
+                        break;
+                    case Criteria::IS_NOT_NULL:
+                        $subPart .= ' IS NOT NULL ';
+                        break;
+                    default:
+                        continue;
+                        break;
+                }
 
-            if(is_numeric($value) && !is_string($value)) {
-                $subPart .= $spaceStr . $value . $spaceStr;
             } else {
-                $subPart .= $spaceStr . $this->db->prepare("%s", $value);
+
+                switch ($assert[Criteria::COND_INDEX]) {
+                    case Criteria::EQUAL:
+                        $subPart .= ' = ';
+                        break;
+                    case Criteria::NOT_EQUAL:
+                        $subPart .= ' <> ';
+                        break;
+                    default:
+                        continue;
+                        break;
+                }
+
+                $value = $assert[Criteria::VAL_INDEX];
+
+                if (is_numeric($value) && !is_string($value)) {
+                    $subPart .= $spaceStr . $value . $spaceStr;
+                } else {
+                    $subPart .= $spaceStr . $this->db->prepare("%s", $value);
+                }
             }
 
             $queryPart .= $subPart;
@@ -214,7 +231,7 @@ abstract class AbstractSqlDaoModel extends AbstractSqlBasedModel implements DaoM
      */
     protected function dtoFactoryByResultArray(array $result = null): ?DtoInterface
     {
-        if(is_null($result)) return null;
+        if (is_null($result)) return null;
         $dtoReflection = new ReflectionClass($this->getDtoClass());
 
         /**

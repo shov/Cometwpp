@@ -32,6 +32,14 @@ interface CriteriaInterface
 
     public function orFieldNotEqual(string $fieldName, $value): CriteriaInterface;
 
+    public function andFieldIsNull(string $fieldName): CriteriaInterface;
+
+    public function orFieldIsNull(string $fieldName): CriteriaInterface;
+
+    public function andFieldIsNotNull(string $fieldName): CriteriaInterface;
+
+    public function orFieldIsNotNull(string $fieldName): CriteriaInterface;
+
     /**
      * TODO: Implement all (for example here we have SQL) methods below
      *
