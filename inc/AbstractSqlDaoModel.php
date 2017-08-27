@@ -95,7 +95,7 @@ abstract class AbstractSqlDaoModel extends AbstractSqlBasedModel implements DaoM
      * @return mixed|void
      * @throws Error
      */
-    public function save(?DtoInterface $dto = null)
+    public function save(?DtoInterface &$dto = null)
     {
         if(is_null($dto)) return null;
 
@@ -120,7 +120,7 @@ abstract class AbstractSqlDaoModel extends AbstractSqlBasedModel implements DaoM
         }
 
         $self = $this;
-        $insertNew = function () use ($toWriteValues, $format, $self, $dto) {
+        $insertNew = function () use ($toWriteValues, $format, $self, &$dto) {
             if($self->db->insert($self->prefixedTableName, $toWriteValues, $format)) {
                 $dto->setId($self->db->insert_id);
             }

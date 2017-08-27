@@ -22,7 +22,7 @@ if (!defined('ABSPATH')) {
  */
 interface DaoModelInterface
 {
-    public function save(?DtoInterface $dto = null);
+    public function save(?DtoInterface &$dto = null);
 
     public function findById(int $id): ?DtoInterface;
 
