@@ -11,6 +11,8 @@
 
 namespace Cometwpp\Core;
 
+use Cometwpp\CacheControlTrait;
+
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly.
 }
@@ -23,6 +25,8 @@ if (!defined('ABSPATH')) {
  */
 class JsProvider extends RegistrableRes
 {
+    use CacheControlTrait;
+
     /**
      * @param string $dirPath : path to target dir, who will be as root for "queries"
      */
@@ -46,7 +50,10 @@ class JsProvider extends RegistrableRes
             $dependence[$k] = $this->getClearName($depend);
         }
 
-        $version = false; // don't use it yet
+        $version = false;
+        if(true === static::$skipCache) {
+            $version = static::getSeed();
+        }
 
         $url = $this->getUrl($name);
         assert(false !== $url);

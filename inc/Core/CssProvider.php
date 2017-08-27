@@ -11,6 +11,8 @@
 
 namespace Cometwpp\Core;
 
+use Cometwpp\CacheControlTrait;
+
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly.
 }
@@ -23,6 +25,8 @@ if (!defined('ABSPATH')) {
  */
 class CssProvider extends RegistrableRes
 {
+    use CacheControlTrait;
+
     /**
      * @param string $dirPath : path to target dir, who will be as root for "queries"
      */
@@ -44,11 +48,17 @@ class CssProvider extends RegistrableRes
         foreach ($dependence as $k => $depend) {
             $dependence[$k] = $this->getClearName($depend);
         }
+
+        $version = false;
+        if(true === static::$skipCache) {
+            $version = static::getSeed();
+        }
+
         $url = $this->getUrl($name);
         assert(false !== $url);
         if (false !== $url) {
-            $this->registerResFor(function () use ($regName, $url, $dependence) {
-                wp_register_style($regName, $url, $dependence);
+            $this->registerResFor(function () use ($regName, $url, $dependence, $version) {
+                wp_register_style($regName, $url, $dependence, $version);
                 wp_enqueue_style($regName);
             }, $context);
         }
