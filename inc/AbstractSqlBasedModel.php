@@ -59,7 +59,7 @@ abstract class AbstractSqlBasedModel
      */
     protected function createTableIfNotExists($table, $sqlFieldsString)
     {
-        $table = $this->addPrefixTo($table);
+        $table = (0 === strpos($table, $this->addPrefixTo(''))) ? $table : $this->addPrefixTo($table);
         if ($this->tableExists($table)) return null;
         $query = 'CREATE TABLE ' . $table . ' (
                     id       int(11)  NOT NULL AUTO_INCREMENT,
