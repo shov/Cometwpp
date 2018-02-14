@@ -1,10 +1,10 @@
-#Cometwpp 
+# Cometwpp 
 is the Wordpress plugin mini framework
-###Requirements
+### Requirements
 PHP **7+**
 <br>
 Wordpress 4+
-###Install
+### Instalation
 You can use unix terminal
 ```bash
 wget https://raw.githubusercontent.com/shov/Cometwpp/master/cometwpp.sh
@@ -24,7 +24,7 @@ Also u can do it manually. TODO:
    * *PluginName.php* to your new plugin name
    * this folder (Cometwpp) to your new plugin name
 
-###Update & Rename
+### Updating & Rename trick
 Using unix terminal:
 ```bash
 cd public_html/wp-content/plugins/MyPlugin
